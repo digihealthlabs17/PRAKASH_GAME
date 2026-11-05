@@ -41,7 +41,7 @@
 
         <!-- Mode selector -->
         <div class="mode-select-wrap">
-          <button class="mode-btn active" id="modeTimed" data-mode="timed">⏱️ Timed Sprint (90s)</button>
+          <button class="mode-btn active" id="modeTimed" data-mode="timed">⏱️ Timed Sprint (180s)</button>
           <button class="mode-btn" id="modeZen" data-mode="zen">🧘 Casual Practice (No Timer)</button>
         </div>
 
@@ -85,7 +85,7 @@
             <div class="stat-pill" id="livesPill">❤️ <span class="stat-value" id="livesVal">❤️❤️❤️</span></div>
           </div>
           <div class="stats-group">
-            <div class="stat-pill" id="timerPill">⏱️ <span class="stat-value" id="timerVal">90s</span></div>
+            <div class="stat-pill" id="timerPill">⏱️ <span class="stat-value" id="timerVal">180s</span></div>
             <div class="stat-pill">📋 <span class="stat-value" id="remainingVal">15 cards left</span></div>
           </div>
         </div>
@@ -102,6 +102,23 @@
         <button class="hint-btn" id="hintBtn">💡 Hint (<span id="hintsLeft">2</span> left)</button>
       </div>
 
+      <!-- Active Card Spotlight (Mobile One-Tap Quick Mode) -->
+      <div class="mobile-spotlight-card" id="mobileSpotlightCard">
+        <div class="spotlight-top-badge">🎯 Current Card</div>
+        <div class="spotlight-main">
+          <span class="spotlight-icon" id="spotlightIcon">😮‍💨</span>
+          <div class="spotlight-info">
+            <h3 class="spotlight-title" id="spotlightTitle">Shortness of breath</h3>
+            <p class="spotlight-hint" id="spotlightHint">Tap a category below 👇 or swipe</p>
+          </div>
+        </div>
+        <div class="spotlight-swipe-guide">
+          <span>👈 Left: Symptoms</span>
+          <span>☝️ Up: Causes</span>
+          <span>Right: Prevention 👉</span>
+        </div>
+      </div>
+
       <!-- Unsorted Cards Section -->
       <div class="cards-section-title">
         <h4><span>🃏 Cards to Classify</span></h4>
@@ -109,8 +126,15 @@
       </div>
       <div id="cardsContainer" class="cards-grid"></div>
 
+      <!-- Mobile Placed Drawer Toggle -->
+      <div class="mobile-placed-toggle">
+        <button class="btn secondary" id="togglePlacedBtn" type="button">
+          📋 View Placed Cards (<span id="placedTotalBadge">0</span>/15) ▼
+        </button>
+      </div>
+
       <!-- Drop Zones -->
-      <div class="zones-grid">
+      <div class="zones-grid" id="zonesGrid">
         <!-- Symptoms -->
         <section class="zone symptoms" data-zone="symptoms" id="zone-symptoms">
           <div class="zone-header">
@@ -154,6 +178,31 @@
       <!-- Controls -->
       <div class="game-controls">
         <button class="btn secondary" id="restartBtn">↻ Restart Game</button>
+      </div>
+
+      <!-- Fixed Sticky Bottom Category Dock (Mobile Quick Sort) -->
+      <div class="mobile-category-dock" id="mobileCategoryDock">
+        <div class="dock-prompt-bar">
+          <span>One-Tap Quick Sort:</span>
+          <span class="dock-prompt-text" id="dockPromptText">Select Category</span>
+        </div>
+        <div class="dock-buttons-row">
+          <button type="button" class="dock-cat-btn symptoms" data-zone="symptoms" id="dockBtn-symptoms">
+            <span class="btn-icon">🔴</span>
+            <span class="btn-name">Symptoms</span>
+            <span class="btn-count" id="mCount-symptoms">0/7</span>
+          </button>
+          <button type="button" class="dock-cat-btn reasons" data-zone="reasons" id="dockBtn-reasons">
+            <span class="btn-icon">🟣</span>
+            <span class="btn-name">Causes</span>
+            <span class="btn-count" id="mCount-reasons">0/5</span>
+          </button>
+          <button type="button" class="dock-cat-btn prevention" data-zone="prevention" id="dockBtn-prevention">
+            <span class="btn-icon">🟢</span>
+            <span class="btn-name">Prevention</span>
+            <span class="btn-count" id="mCount-prevention">0/3</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -581,9 +630,10 @@
     let maxStreak = 0;
     let totalAttempts = 0;
     let correctPlacements = 0;
+    const TOTAL_TIME = 180;
     let remainingCards = 15;
     let selectedElement = null;
-    let timeLeft = 90;
+    let timeLeft = TOTAL_TIME;
     let timerInterval = null;
     let startTime = 0;
     let hintsRemaining = 2;
@@ -656,15 +706,69 @@
         const total = categoryMeta[cat].total;
         const counterEl = $(`counter-${cat}`);
         const zoneEl = $(`zone-${cat}`);
+        const mCountEl = $(`mCount-${cat}`);
 
         if (count >= total) {
           counterEl.textContent = `✓ COMPLETED (${count}/${total})`;
           zoneEl.classList.add("completed");
+          if (mCountEl) mCountEl.textContent = `✓ ${count}/${total}`;
         } else {
           counterEl.textContent = `${count} / ${total}`;
           zoneEl.classList.remove("completed");
+          if (mCountEl) mCountEl.textContent = `${count}/${total}`;
         }
       });
+      if ($("placedTotalBadge")) $("placedTotalBadge").textContent = correctPlacements;
+    }
+
+    // Mobile Selection & Spotlight Controllers
+    function selectCard(cardElement) {
+      if (!cardElement) {
+        selectedElement = null;
+        updateMobileSpotlight(null);
+        return;
+      }
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+      selectedElement = cardElement;
+      cardElement.classList.add("selected");
+      try {
+        cardElement.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      } catch(e) {}
+
+      updateMobileSpotlight(cardElement);
+      sound.playSelect();
+      $("gameMsg").innerHTML = `Selected: <b>"${cardElement.dataset.text}"</b> — Tap category below!`;
+      $("gameMsg").className = "game-message";
+    }
+
+    function selectNextAvailableCard() {
+      const container = $("cardsContainer");
+      if (!container) return;
+      const cards = [...container.children];
+      if (cards.length > 0) {
+        selectCard(cards[0]);
+      } else {
+        selectCard(null);
+      }
+    }
+
+    function updateMobileSpotlight(cardElement) {
+      const spotlight = $("mobileSpotlightCard");
+      const dockPrompt = $("dockPromptText");
+      if (!spotlight) return;
+
+      if (cardElement) {
+        spotlight.style.opacity = "1";
+        $("spotlightIcon").textContent = cardElement.dataset.icon;
+        $("spotlightTitle").textContent = cardElement.dataset.text;
+        $("spotlightHint").textContent = "Tap category below 👇 or swipe";
+        if (dockPrompt) dockPrompt.textContent = `"${cardElement.dataset.text}"`;
+      } else {
+        spotlight.style.opacity = "0.5";
+        $("spotlightTitle").textContent = "All cards sorted!";
+        $("spotlightHint").textContent = "Great job!";
+        if (dockPrompt) dockPrompt.textContent = "Done!";
+      }
     }
 
     // START GAME
@@ -682,7 +786,7 @@
       correctPlacements = 0;
       remainingCards = items.length;
       selectedElement = null;
-      timeLeft = 90;
+      timeLeft = TOTAL_TIME;
       hintsRemaining = 2;
       startTime = Date.now();
       zoneCounts.symptoms = 0;
@@ -713,7 +817,7 @@
       } else {
         $("timerPill").style.display = "inline-flex";
         $("timerTrack").style.display = "block";
-        $("timerVal").textContent = "90s";
+        $("timerVal").textContent = `${TOTAL_TIME}s`;
         $("timerBar").style.width = "100%";
         $("timerBar").className = "timer-fill";
         $("missionText").innerHTML = "🎮 <b>Mission:</b> Drag a card into the matching category, or tap a card then tap the category zone.";
@@ -753,23 +857,14 @@
         // Touch / Click selection
         card.addEventListener("click", e => {
           e.stopPropagation();
-          if (selectedElement === card) {
-            // Deselect
-            card.classList.remove("selected");
-            selectedElement = null;
-            $("gameMsg").textContent = "";
-          } else {
-            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-            selectedElement = card;
-            card.classList.add("selected");
-            sound.playSelect();
-            $("gameMsg").textContent = `Selected: "${item.text}" — Now tap Symptoms, Causes, or Prevention!`;
-            $("gameMsg").className = "game-message";
-          }
+          selectCard(card);
         });
 
         container.appendChild(card);
       });
+
+      // Auto-select first card for seamless one-tap flow
+      selectNextAvailableCard();
 
       showScreen("gameScreen");
 
@@ -778,12 +873,12 @@
         timerInterval = setInterval(() => {
           timeLeft--;
           $("timerVal").textContent = `${timeLeft}s`;
-          const pct = Math.max(0, (timeLeft / 90) * 100);
+          const pct = Math.max(0, (timeLeft / TOTAL_TIME) * 100);
           $("timerBar").style.width = `${pct}%`;
 
-          if (timeLeft <= 30 && timeLeft > 15) {
+          if (timeLeft <= 45 && timeLeft > 20) {
             $("timerBar").className = "timer-fill warning";
-          } else if (timeLeft <= 15) {
+          } else if (timeLeft <= 20) {
             $("timerBar").className = "timer-fill danger";
           }
 
@@ -824,7 +919,7 @@
         $("gameMsg").innerHTML = `❌ <b>Not quite!</b> "${cardElement.dataset.text}" is actually a <b>${actualName}</b>.`;
         $("gameMsg").className = "game-message error";
 
-        // Shake card
+        // Shake card & spotlight
         cardElement.animate([
           { transform: 'translateX(-10px)' },
           { transform: 'translateX(10px)' },
@@ -832,6 +927,17 @@
           { transform: 'translateX(6px)' },
           { transform: 'translateX(0)' }
         ], { duration: 320 });
+
+        const spotEl = $("mobileSpotlightCard");
+        if (spotEl) {
+          spotEl.animate([
+            { transform: 'translateX(-8px)' },
+            { transform: 'translateX(8px)' },
+            { transform: 'translateX(-4px)' },
+            { transform: 'translateX(4px)' },
+            { transform: 'translateX(0)' }
+          ], { duration: 320 });
+        }
 
         if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
 
@@ -887,6 +993,9 @@
       zoneCounts[targetCategory]++;
       updateCategoryUI();
 
+      // Automatically advance to next card for zero-scroll flow
+      selectNextAvailableCard();
+
       $("remainingVal").textContent = `${remainingCards} cards left`;
       $("cardBadge").textContent = `${remainingCards} remaining`;
       $("gameMsg").innerHTML = `✅ <b>Correct!</b> "${mini.innerText}" sorted properly.`;
@@ -934,14 +1043,81 @@
 
     // Deselect if clicking outside
     document.addEventListener("click", e => {
-      if (!e.target.closest(".card") && !e.target.closest(".zone")) {
-        if (selectedElement) {
-          selectedElement.classList.remove("selected");
-          selectedElement = null;
-          $("gameMsg").textContent = "";
-        }
+      if (!e.target.closest(".card") && 
+          !e.target.closest(".zone") && 
+          !e.target.closest(".mobile-category-dock") && 
+          !e.target.closest(".mobile-spotlight-card") && 
+          !e.target.closest(".mobile-placed-toggle") &&
+          !e.target.closest("#hintBtn")) {
+        // Do not unselect on mobile so quick buttons stay active
       }
     });
+
+    // Mobile Category Dock Listeners (One-Tap Quick Sort)
+    document.querySelectorAll(".dock-cat-btn").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        if (!selectedElement) {
+          selectNextAvailableCard();
+        }
+        if (!selectedElement) return;
+
+        const zoneCategory = btn.dataset.zone;
+        const targetZone = $(`zone-${zoneCategory}`);
+        if (targetZone) {
+          const rect = btn.getBoundingClientRect();
+          handleDrop(selectedElement, targetZone, {
+            x: rect.left + rect.width / 2,
+            y: rect.top - 20
+          });
+        }
+      });
+    });
+
+    // Mobile Placed Cards Drawer Toggle
+    const toggleBtn = $("togglePlacedBtn");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        const grid = $("zonesGrid");
+        grid.classList.toggle("show-mobile");
+        const isOpen = grid.classList.contains("show-mobile");
+        toggleBtn.innerHTML = isOpen
+          ? `▲ Hide Placed Cards (${correctPlacements}/15)`
+          : `📋 View Placed Cards (${correctPlacements}/15) ▼`;
+      });
+    }
+
+    // Touch Swipe Gestures on Mobile Spotlight Card
+    const spot = $("mobileSpotlightCard");
+    if (spot) {
+      let touchStartX = 0, touchStartY = 0;
+      spot.addEventListener("touchstart", e => {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      spot.addEventListener("touchend", e => {
+        if (e.changedTouches.length === 1) {
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const dy = e.changedTouches[0].clientY - touchStartY;
+          if (!selectedElement) return;
+
+          // Horizontal swipe: Left = symptoms, Right = prevention
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+            if (dx < 0) {
+              handleDrop(selectedElement, $("zone-symptoms"));
+            } else {
+              handleDrop(selectedElement, $("zone-prevention"));
+            }
+          } else if (dy < -40 && Math.abs(dy) > Math.abs(dx)) {
+            // Swipe Up = reasons/causes
+            handleDrop(selectedElement, $("zone-reasons"));
+          }
+        }
+      }, { passive: true });
+    }
 
     // Hint Button
     $("hintBtn").addEventListener("click", () => {
