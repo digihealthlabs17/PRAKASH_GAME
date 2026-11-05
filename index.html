@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anemia Hero — Health Sorting Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient floating red blood cells background -->
+  <canvas id="ambientCanvas"></canvas>
+  <!-- Confetti canvas for victory celebration -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="app">
+    <!-- Top Branding & Navigation Bar -->
+    <header class="brand-bar">
+      <div class="brand-logo">
+        <span class="logo-icon">🩸</span>
+        <div>
+          <h1 class="brand-title">Anemia Hero</h1>
+          <p class="brand-subtitle">Health Sorting Challenge</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button id="soundToggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+      </div>
+    </header>
+
+    <!-- START SCREEN -->
+    <section id="startScreen" class="screen active">
+      <div class="start-container">
+        <div class="hero-badge">✨ Interactive Health Challenge</div>
+        <h2 class="start-title">Master the Balance:<br><span>Become an Anemia Hero!</span></h2>
+        <p class="start-desc">
+          Test your medical intuition! Classify 15 clinical cards into <b>Symptoms</b>, underlying <b>Causes</b>, and daily <b>Prevention</b> habits before time runs out.
+        </p>
+
+        <!-- Mode selector -->
+        <div class="mode-select-wrap">
+          <button class="mode-btn active" id="modeTimed" data-mode="timed">⏱️ Timed Sprint (90s)</button>
+          <button class="mode-btn" id="modeZen" data-mode="zen">🧘 Casual Practice (No Timer)</button>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">🃏</span>
+            <span class="feature-title">15 Clinical Cards</span>
+            <span class="feature-subtitle">Symptoms, causes & diets</span>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🔥</span>
+            <span class="feature-title">Combo Streaks</span>
+            <span class="feature-subtitle">Score multiplier bonuses</span>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">❤️</span>
+            <span class="feature-title">3 Health Lives</span>
+            <span class="feature-subtitle">Careful sorting matters</span>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">💡</span>
+            <span class="feature-title">Smart Hints</span>
+            <span class="feature-subtitle">Help when you need it</span>
+          </div>
+        </div>
+
+        <button class="btn" id="startBtn">
+          <span>🎮 Start Game</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- GAMEPLAY SCREEN -->
+    <section id="gameScreen" class="screen">
+      <!-- Status & Stats Bar -->
+      <div class="game-header">
+        <div class="game-stats-row">
+          <div class="stats-group">
+            <div class="stat-pill">⭐ <span class="stat-value" id="scoreVal">0</span></div>
+            <div class="stat-pill streak" id="streakPill">🔥 <span class="stat-value" id="streakVal">Streak 0</span></div>
+            <div class="stat-pill" id="livesPill">❤️ <span class="stat-value" id="livesVal">❤️❤️❤️</span></div>
+          </div>
+          <div class="stats-group">
+            <div class="stat-pill" id="timerPill">⏱️ <span class="stat-value" id="timerVal">90s</span></div>
+            <div class="stat-pill">📋 <span class="stat-value" id="remainingVal">15 cards left</span></div>
+          </div>
+        </div>
+        <div class="timer-track" id="timerTrack">
+          <div class="timer-fill" id="timerBar"></div>
+        </div>
+      </div>
+
+      <!-- Mission helper banner -->
+      <div class="mission-banner">
+        <div class="mission-text" id="missionText">
+          🎮 <b>Mission:</b> Drag a card into the matching category, or tap a card then tap the category zone.
+        </div>
+        <button class="hint-btn" id="hintBtn">💡 Hint (<span id="hintsLeft">2</span> left)</button>
+      </div>
+
+      <!-- Unsorted Cards Section -->
+      <div class="cards-section-title">
+        <h4><span>🃏 Cards to Classify</span></h4>
+        <span class="cards-count-badge" id="cardBadge">15 remaining</span>
+      </div>
+      <div id="cardsContainer" class="cards-grid"></div>
+
+      <!-- Drop Zones -->
+      <div class="zones-grid">
+        <!-- Symptoms -->
+        <section class="zone symptoms" data-zone="symptoms" id="zone-symptoms">
+          <div class="zone-header">
+            <div class="zone-title-wrap">
+              <h3 class="zone-title">🔴 Symptoms</h3>
+              <p class="zone-desc">Physical & cognitive sensations felt by patient</p>
+            </div>
+            <span class="zone-counter" id="counter-symptoms">0 / 7</span>
+          </div>
+          <div class="placed-tray"></div>
+        </section>
+
+        <!-- Causes & Reasons -->
+        <section class="zone reasons" data-zone="reasons" id="zone-reasons">
+          <div class="zone-header">
+            <div class="zone-title-wrap">
+              <h3 class="zone-title">🟣 Causes & Reasons</h3>
+              <p class="zone-desc">Nutritional deficiencies & medical factors</p>
+            </div>
+            <span class="zone-counter" id="counter-reasons">0 / 5</span>
+          </div>
+          <div class="placed-tray"></div>
+        </section>
+
+        <!-- Prevention -->
+        <section class="zone prevention" data-zone="prevention" id="zone-prevention">
+          <div class="zone-header">
+            <div class="zone-title-wrap">
+              <h3 class="zone-title">🟢 Prevention</h3>
+              <p class="zone-desc">Healthy diets, iron enhancers & medical care</p>
+            </div>
+            <span class="zone-counter" id="counter-prevention">0 / 3</span>
+          </div>
+          <div class="placed-tray"></div>
+        </section>
+      </div>
+
+      <!-- Feedback message toast -->
+      <div id="gameMsg" class="game-message"></div>
+
+      <!-- Controls -->
+      <div class="game-controls">
+        <button class="btn secondary" id="restartBtn">↻ Restart Game</button>
+      </div>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section id="resultScreen" class="screen">
+      <div class="result-container">
+        <div class="result-trophy" id="resultEmoji">🏆</div>
+        <h2 class="result-title" id="resultHeading">Spectacular Victory!</h2>
+        <div class="result-stars" id="resultStars">⭐⭐⭐</div>
+
+        <div class="score-banner">
+          <div class="score-label">Final Score</div>
+          <div class="score-number" id="finalScoreVal">0</div>
+          <div class="high-score-tag" id="highScoreTag">🏆 Best Score: <span id="bestScoreVal">0</span></div>
+        </div>
+
+        <div class="result-stats-grid">
+          <div class="result-stat-box">
+            <div class="result-stat-val" id="statAccuracy">100%</div>
+            <div class="result-stat-lbl">Accuracy</div>
+          </div>
+          <div class="result-stat-box">
+            <div class="result-stat-val" id="statMaxStreak">0</div>
+            <div class="result-stat-lbl">Max Streak</div>
+          </div>
+          <div class="result-stat-box">
+            <div class="result-stat-val" id="statTimeTaken">0s</div>
+            <div class="result-stat-lbl">Time Taken</div>
+          </div>
+        </div>
+
+        <!-- Educational summary review of all cards -->
+        <div class="review-section">
+          <h3>📖 Clinical Knowledge Guide</h3>
+          <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">Here is the medical breakdown of the items from your game:</p>
+          <div id="reviewList"></div>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+          <button class="btn" id="playAgainBtn"><span>🔄 Play Again</span></button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Educational Factoid Modal -->
+  <div id="factModal" class="fact-modal-backdrop">
+    <div class="fact-modal">
+      <div class="fact-icon" id="modalIcon">💡</div>
+      <h3 class="fact-title" id="modalTitle">Item Title</h3>
+      <div class="fact-category-tag" id="modalCategoryTag">Category</div>
+      <p class="fact-body" id="modalBody">Medical factoid detail.</p>
+      <button class="btn secondary" style="width: 100%;" id="closeModalBtn">Got it!</button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. GAME DATA: Items with Clinical Context & Categorization
+       ========================================================================= */
+    const items = [
+      {
+        id: "shortness_breath",
+        text: "Shortness of breath",
+        icon: "😮‍💨",
+        category: "symptoms",
+        fact: "Tissues and vital organs receive inadequate oxygen due to low hemoglobin, causing rapid respiratory compensation."
+      },
+      {
+        id: "fast_heartbeat",
+        text: "Fast heartbeat",
+        icon: "💗",
+        category: "symptoms",
+        fact: "The heart accelerates (tachycardia) to pump larger volumes of blood to compensate for deficient oxygen delivery."
+      },
+      {
+        id: "feeling_weak",
+        text: "Feeling weak",
+        icon: "🪫",
+        category: "symptoms",
+        fact: "Skeletal muscles are deprived of cellular oxygen, impairing mitochondrial ATP energy production."
+      },
+      {
+        id: "difficulty_concentrating",
+        text: "Difficulty concentrating",
+        icon: "🧠",
+        category: "symptoms",
+        fact: "Reduced cerebral oxygen perfusion manifests as brain fog, poor memory retention, and low attention span."
+      },
+      {
+        id: "tired_small_activity",
+        text: "Tired after small activity",
+        icon: "🏃",
+        category: "symptoms",
+        fact: "Extreme exhaustion sets in even after trivial physical tasks because stamina reserve is severely depleted."
+      },
+      {
+        id: "brittle_nails",
+        text: "Brittle nails",
+        icon: "💅",
+        category: "symptoms",
+        fact: "Iron deficiency causes impaired keratin synthesis, leading to thin, brittle, or spoon-shaped nails (koilonychia)."
+      },
+      {
+        id: "pica_cravings",
+        text: "Pica / craving non-food items",
+        icon: "🧊",
+        category: "symptoms",
+        fact: "Severe iron deficiency often triggers compulsive cravings for ice (pagophagia), chalk, starch, or soil."
+      },
+      {
+        id: "heavy_bleeding",
+        text: "Heavy menstrual bleeding",
+        icon: "🩸",
+        category: "reasons",
+        fact: "Menorrhagia produces recurrent blood loss exceeding iron replenishment, making it a leading cause of anemia in women."
+      },
+      {
+        id: "low_iron_intake",
+        text: "Low iron intake",
+        icon: "🥗",
+        category: "reasons",
+        fact: "Diets deficient in iron-dense food staples fail to meet the daily metabolic requirements of the bone marrow."
+      },
+      {
+        id: "b12_deficiency",
+        text: "Vitamin B12 deficiency",
+        icon: "🧬",
+        category: "reasons",
+        fact: "Vitamin B12 is essential for DNA synthesis during erythrocyte division; its absence causes megaloblastic anemia."
+      },
+      {
+        id: "folate_deficiency",
+        text: "Folate deficiency",
+        icon: "🥦",
+        category: "reasons",
+        fact: "Folate (Vitamin B9) is required for rapid red blood cell maturation. Deficiency results in abnormally enlarged cells."
+      },
+      {
+        id: "long_term_illness",
+        text: "Long-term illness",
+        icon: "🏥",
+        category: "reasons",
+        fact: "Chronic inflammatory illnesses trigger hepcidin elevation, which locks iron within storage macrophages."
+      },
+      {
+        id: "eat_iron_rich",
+        text: "Eat iron-rich foods",
+        icon: "🥬",
+        category: "prevention",
+        fact: "Consuming dark leafy greens, legumes, dates, poultry, and fortified cereals replenishes ferritin storage levels."
+      },
+      {
+        id: "iron_advised",
+        text: "Take iron only when advised",
+        icon: "💊",
+        category: "prevention",
+        fact: "Iron supplementation requires accurate clinical dosing to prevent toxicity or gastrointestinal side effects."
+      },
+      {
+        id: "vit_c_iron",
+        text: "Eat vitamin-C-rich foods with iron",
+        icon: "🍊",
+        category: "prevention",
+        fact: "Ascorbic acid (Vitamin C) reduces non-heme ferric iron (Fe3+) into soluble ferrous iron (Fe2+), boosting gut absorption by up to 3x."
+      }
+    ];
+
+    const categoryMeta = {
+      symptoms: { name: "Symptoms", color: "#e11d48", total: 7 },
+      reasons: { name: "Causes & Reasons", color: "#7c3aed", total: 5 },
+      prevention: { name: "Prevention", color: "#059669", total: 3 }
+    };
+
+    /* =========================================================================
+       2. WEB AUDIO SYNTHESIZER (No external audio files needed!)
+       ========================================================================= */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = localStorage.getItem("anemia_hero_muted") === "true";
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        localStorage.setItem("anemia_hero_muted", this.muted);
+        return !this.muted;
+      }
+
+      playTone(freq, type = "sine", duration = 0.12, gainVal = 0.08) {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      }
+
+      playSuccess(streak = 0) {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        // Arpeggiated cheerful chime
+        const base = 523.25; // C5
+        const streakBonus = Math.min(streak * 30, 200);
+        const notes = [base + streakBonus, (base * 1.25) + streakBonus, (base * 1.5) + streakBonus];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.playTone(freq, "triangle", 0.15, 0.07);
+          }, idx * 45);
+        });
+      }
+
+      playStreakMilestone() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        [523, 659, 784, 1046].forEach((freq, i) => {
+          setTimeout(() => this.playTone(freq, "sine", 0.22, 0.09), i * 60);
+        });
+      }
+
+      playError() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.09, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.22);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.22);
+        } catch(e) {}
+      }
+
+      playSelect() {
+        this.playTone(700, "sine", 0.04, 0.03);
+      }
+
+      playFanfare() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const fanfare = [
+          { f: 523.25, d: 0.12, t: 0 },
+          { f: 659.25, d: 0.12, t: 120 },
+          { f: 783.99, d: 0.15, t: 240 },
+          { f: 1046.50, d: 0.35, t: 380 }
+        ];
+        fanfare.forEach(n => {
+          setTimeout(() => this.playTone(n.f, "triangle", n.d, 0.1), n.t);
+        });
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    /* =========================================================================
+       3. CANVAS PARTICLES & CONFETTI ENGINE
+       ========================================================================= */
+    const ambientCanvas = document.getElementById("ambientCanvas");
+    const actx = ambientCanvas.getContext("2d");
+    let bloodCells = [];
+
+    function resizeCanvas() {
+      ambientCanvas.width = window.innerWidth;
+      ambientCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class BloodCell {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * ambientCanvas.width;
+        this.y = ambientCanvas.height + Math.random() * 80;
+        this.radius = 12 + Math.random() * 18;
+        this.speedY = 0.3 + Math.random() * 0.6;
+        this.speedX = Math.sin(Math.random() * Math.PI) * 0.4;
+        this.angle = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.015;
+        this.opacity = 0.12 + Math.random() * 0.18;
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        this.angle += this.rotationSpeed;
+        if (this.y < -50) this.reset();
+      }
+      draw() {
+        actx.save();
+        actx.translate(this.x, this.y);
+        actx.rotate(this.angle);
+        actx.beginPath();
+        // Draw red blood cell biconcave disk
+        actx.fillStyle = `rgba(225, 29, 72, ${this.opacity})`;
+        actx.ellipse(0, 0, this.radius, this.radius * 0.7, 0, 0, Math.PI * 2);
+        actx.fill();
+        // Inner dimple
+        actx.beginPath();
+        actx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.8})`;
+        actx.ellipse(0, 0, this.radius * 0.42, this.radius * 0.3, 0, 0, Math.PI * 2);
+        actx.fill();
+        actx.restore();
+      }
+    }
+
+    for (let i = 0; i < 18; i++) {
+      const cell = new BloodCell();
+      cell.y = Math.random() * ambientCanvas.height;
+      bloodCells.push(cell);
+    }
+
+    function animateAmbient() {
+      actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
+      bloodCells.forEach(cell => {
+        cell.update();
+        cell.draw();
+      });
+      requestAnimationFrame(animateAmbient);
+    }
+    animateAmbient();
+
+    // Confetti System
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const cctx = confettiCanvas.getContext("2d");
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    function resizeConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeConfetti);
+    resizeConfetti();
+
+    function fireConfetti(count = 70) {
+      const colors = ["#e11d48", "#f43f5e", "#7c3aed", "#a855f7", "#10b981", "#34d399", "#f59e0b", "#3b82f6"];
+      for (let i = 0; i < count; i++) {
+        confettiParticles.push({
+          x: confettiCanvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: confettiCanvas.height / 2 - 50,
+          w: 8 + Math.random() * 8,
+          h: 6 + Math.random() * 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 16,
+          vy: -8 - Math.random() * 12,
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 18,
+          gravity: 0.35,
+          opacity: 1
+        });
+      }
+      if (!confettiAnimId) {
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiParticles.forEach((p, idx) => {
+        p.vy += p.gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed;
+        p.opacity -= 0.008;
+
+        cctx.save();
+        cctx.translate(p.x, p.y);
+        cctx.rotate((p.rotation * Math.PI) / 180);
+        cctx.fillStyle = p.color;
+        cctx.globalAlpha = Math.max(p.opacity, 0);
+        cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        cctx.restore();
+
+        if (p.opacity <= 0 || p.y > confettiCanvas.height + 50) {
+          confettiParticles.splice(idx, 1);
+        }
+      });
+
+      if (confettiParticles.length > 0) {
+        confettiAnimId = requestAnimationFrame(animateConfetti);
+      } else {
+        confettiAnimId = null;
+        cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+
+    /* =========================================================================
+       4. GAME STATE & DOM CONTROLLERS
+       ========================================================================= */
+    const $ = id => document.getElementById(id);
+
+    let gameMode = "timed"; // "timed" or "zen"
+    let score = 0;
+    let lives = 3;
+    let streak = 0;
+    let maxStreak = 0;
+    let totalAttempts = 0;
+    let correctPlacements = 0;
+    let remainingCards = 15;
+    let selectedElement = null;
+    let timeLeft = 90;
+    let timerInterval = null;
+    let startTime = 0;
+    let hintsRemaining = 2;
+
+    const zoneCounts = {
+      symptoms: 0,
+      reasons: 0,
+      prevention: 0
+    };
+
+    // Initialize audio icon
+    $("soundToggle").textContent = sound.muted ? "🔇" : "🔊";
+    $("soundToggle").addEventListener("click", () => {
+      const active = sound.toggleMute();
+      $("soundToggle").textContent = active ? "🔊" : "🔇";
+      if (active) sound.playSelect();
+    });
+
+    // Screen switching
+    function showScreen(screenId) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      $(screenId).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Mode Selection Buttons
+    $("modeTimed").addEventListener("click", () => {
+      gameMode = "timed";
+      $("modeTimed").classList.add("active");
+      $("modeZen").classList.remove("active");
+      sound.playSelect();
+    });
+
+    $("modeZen").addEventListener("click", () => {
+      gameMode = "zen";
+      $("modeZen").classList.add("active");
+      $("modeTimed").classList.remove("active");
+      sound.playSelect();
+    });
+
+    // Floating score popup
+    function createScorePopup(text, x, y, isStreak = false) {
+      const pop = document.createElement("div");
+      pop.className = "floating-score";
+      pop.textContent = text;
+      if (isStreak) {
+        pop.style.color = "#f59e0b";
+        pop.style.fontSize = "26px";
+      }
+      pop.style.left = `${x}px`;
+      pop.style.top = `${y}px`;
+      document.body.appendChild(pop);
+      setTimeout(() => pop.remove(), 950);
+    }
+
+    // Shuffle Array Utility
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Update Category Counters
+    function updateCategoryUI() {
+      ["symptoms", "reasons", "prevention"].forEach(cat => {
+        const count = zoneCounts[cat];
+        const total = categoryMeta[cat].total;
+        const counterEl = $(`counter-${cat}`);
+        const zoneEl = $(`zone-${cat}`);
+
+        if (count >= total) {
+          counterEl.textContent = `✓ COMPLETED (${count}/${total})`;
+          zoneEl.classList.add("completed");
+        } else {
+          counterEl.textContent = `${count} / ${total}`;
+          zoneEl.classList.remove("completed");
+        }
+      });
+    }
+
+    // START GAME
+    function startGame() {
+      sound.init();
+      sound.playSelect();
+      clearInterval(timerInterval);
+
+      // Reset state
+      score = 0;
+      lives = 3;
+      streak = 0;
+      maxStreak = 0;
+      totalAttempts = 0;
+      correctPlacements = 0;
+      remainingCards = items.length;
+      selectedElement = null;
+      timeLeft = 90;
+      hintsRemaining = 2;
+      startTime = Date.now();
+      zoneCounts.symptoms = 0;
+      zoneCounts.reasons = 0;
+      zoneCounts.prevention = 0;
+
+      // Update UI elements
+      $("scoreVal").textContent = "0";
+      $("streakVal").textContent = "Streak 0";
+      $("streakPill").classList.remove("active");
+      $("livesVal").textContent = "❤️❤️❤️";
+      $("remainingVal").textContent = `${remainingCards} cards left`;
+      $("cardBadge").textContent = `${remainingCards} remaining`;
+      $("hintsLeft").textContent = hintsRemaining;
+      $("hintBtn").disabled = false;
+      $("gameMsg").textContent = "";
+      $("gameMsg").className = "game-message";
+
+      // Reset zones
+      document.querySelectorAll(".placed-tray").forEach(tray => tray.innerHTML = "");
+      updateCategoryUI();
+
+      // Configure timer track based on mode
+      if (gameMode === "zen") {
+        $("timerPill").style.display = "none";
+        $("timerTrack").style.display = "none";
+        $("missionText").innerHTML = "🧘 <b>Casual Mode:</b> Learn at your own pace! Drag or tap cards to sort them.";
+      } else {
+        $("timerPill").style.display = "inline-flex";
+        $("timerTrack").style.display = "block";
+        $("timerVal").textContent = "90s";
+        $("timerBar").style.width = "100%";
+        $("timerBar").className = "timer-fill";
+        $("missionText").innerHTML = "🎮 <b>Mission:</b> Drag a card into the matching category, or tap a card then tap the category zone.";
+      }
+
+      // Render Cards
+      const container = $("cardsContainer");
+      container.innerHTML = "";
+      const shuffled = shuffle(items);
+
+      shuffled.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.draggable = true;
+        card.dataset.id = item.id;
+        card.dataset.category = item.category;
+        card.dataset.text = item.text;
+        card.dataset.icon = item.icon;
+        card.dataset.fact = item.fact;
+
+        card.innerHTML = `
+          <span class="card-icon">${item.icon}</span>
+          <span class="card-label">${item.text}</span>
+        `;
+
+        // Desktop Drag events
+        card.addEventListener("dragstart", e => {
+          e.dataTransfer.setData("text/plain", item.id);
+          card.classList.add("dragging");
+          sound.playSelect();
+        });
+
+        card.addEventListener("dragend", () => {
+          card.classList.remove("dragging");
+        });
+
+        // Touch / Click selection
+        card.addEventListener("click", e => {
+          e.stopPropagation();
+          if (selectedElement === card) {
+            // Deselect
+            card.classList.remove("selected");
+            selectedElement = null;
+            $("gameMsg").textContent = "";
+          } else {
+            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+            selectedElement = card;
+            card.classList.add("selected");
+            sound.playSelect();
+            $("gameMsg").textContent = `Selected: "${item.text}" — Now tap Symptoms, Causes, or Prevention!`;
+            $("gameMsg").className = "game-message";
+          }
+        });
+
+        container.appendChild(card);
+      });
+
+      showScreen("gameScreen");
+
+      // Start countdown if timed
+      if (gameMode === "timed") {
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          $("timerVal").textContent = `${timeLeft}s`;
+          const pct = Math.max(0, (timeLeft / 90) * 100);
+          $("timerBar").style.width = `${pct}%`;
+
+          if (timeLeft <= 30 && timeLeft > 15) {
+            $("timerBar").className = "timer-fill warning";
+          } else if (timeLeft <= 15) {
+            $("timerBar").className = "timer-fill danger";
+          }
+
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            endGame(false, "Time's up!");
+          }
+        }, 1000);
+      }
+    }
+
+    // DROP & PLACEMENT LOGIC
+    function handleDrop(cardElement, targetZoneElement, clientCoords = null) {
+      if (!cardElement || !targetZoneElement) return;
+
+      const targetCategory = targetZoneElement.dataset.zone;
+      const cardCategory = cardElement.dataset.category;
+      totalAttempts++;
+
+      const coords = clientCoords || {
+        x: targetZoneElement.getBoundingClientRect().left + targetZoneElement.offsetWidth / 2,
+        y: targetZoneElement.getBoundingClientRect().top + 50
+      };
+
+      // INCORRECT PLACEMENT
+      if (cardCategory !== targetCategory) {
+        sound.playError();
+        streak = 0;
+        $("streakVal").textContent = "Streak 0";
+        $("streakPill").classList.remove("active");
+
+        if (gameMode === "timed") {
+          lives--;
+          $("livesVal").textContent = "❤️".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, 3 - lives));
+        }
+
+        const actualName = categoryMeta[cardCategory].name;
+        $("gameMsg").innerHTML = `❌ <b>Not quite!</b> "${cardElement.dataset.text}" is actually a <b>${actualName}</b>.`;
+        $("gameMsg").className = "game-message error";
+
+        // Shake card
+        cardElement.animate([
+          { transform: 'translateX(-10px)' },
+          { transform: 'translateX(10px)' },
+          { transform: 'translateX(-6px)' },
+          { transform: 'translateX(6px)' },
+          { transform: 'translateX(0)' }
+        ], { duration: 320 });
+
+        if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+
+        if (lives <= 0 && gameMode === "timed") {
+          clearInterval(timerInterval);
+          setTimeout(() => endGame(false, "Out of lives!"), 500);
+        }
+        return;
+      }
+
+      // CORRECT PLACEMENT
+      streak++;
+      if (streak > maxStreak) maxStreak = streak;
+      correctPlacements++;
+
+      let pointsGained = 10;
+      let streakBonusText = "";
+
+      if (streak >= 3) {
+        const bonus = (streak - 2) * 5;
+        pointsGained += bonus;
+        streakBonusText = ` 🔥 +${bonus} Streak Bonus!`;
+        $("streakPill").classList.add("active");
+        if (streak % 3 === 0) sound.playStreakMilestone();
+      }
+
+      score += pointsGained;
+      $("scoreVal").textContent = score;
+      $("streakVal").textContent = `Streak ${streak}`;
+
+      sound.playSuccess(streak);
+      if (navigator.vibrate) navigator.vibrate([30]);
+
+      // Floating score FX
+      createScorePopup(`+${pointsGained}${streakBonusText}`, coords.x, coords.y, streak >= 3);
+
+      // Create mini placed chip
+      const mini = document.createElement("span");
+      mini.className = "mini-badge";
+      mini.innerHTML = `<span>${cardElement.dataset.icon}</span> <span>${cardElement.dataset.text}</span>`;
+      mini.title = "Click to read clinical fact";
+      mini.addEventListener("click", e => {
+        e.stopPropagation();
+        openFactModal(cardElement.dataset.text, cardElement.dataset.icon, cardCategory, cardElement.dataset.fact);
+      });
+
+      targetZoneElement.querySelector(".placed-tray").appendChild(mini);
+
+      // Remove active card
+      cardElement.remove();
+      selectedElement = null;
+      remainingCards--;
+      zoneCounts[targetCategory]++;
+      updateCategoryUI();
+
+      $("remainingVal").textContent = `${remainingCards} cards left`;
+      $("cardBadge").textContent = `${remainingCards} remaining`;
+      $("gameMsg").innerHTML = `✅ <b>Correct!</b> "${mini.innerText}" sorted properly.`;
+      $("gameMsg").className = "game-message correct";
+
+      // If zone completed, burst mini confetti
+      if (zoneCounts[targetCategory] === categoryMeta[targetCategory].total) {
+        fireConfetti(35);
+      }
+
+      // Check win condition
+      if (remainingCards === 0) {
+        clearInterval(timerInterval);
+        setTimeout(() => endGame(true), 600);
+      }
+    }
+
+    // Set up zone listeners (Desktop Drag-and-Drop + Tap-to-Place)
+    document.querySelectorAll(".zone").forEach(zone => {
+      zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("over");
+      });
+
+      zone.addEventListener("dragleave", () => {
+        zone.classList.remove("over");
+      });
+
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("over");
+        const itemId = e.dataTransfer.getData("text/plain");
+        const card = [...$("cardsContainer").children].find(c => c.dataset.id === itemId);
+        if (card) {
+          handleDrop(card, zone, { x: e.clientX, y: e.clientY });
+        }
+      });
+
+      zone.addEventListener("click", e => {
+        if (selectedElement) {
+          handleDrop(selectedElement, zone, { x: e.clientX, y: e.clientY });
+        }
+      });
+    });
+
+    // Deselect if clicking outside
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".card") && !e.target.closest(".zone")) {
+        if (selectedElement) {
+          selectedElement.classList.remove("selected");
+          selectedElement = null;
+          $("gameMsg").textContent = "";
+        }
+      }
+    });
+
+    // Hint Button
+    $("hintBtn").addEventListener("click", () => {
+      if (hintsRemaining <= 0) return;
+      const cards = [...$("cardsContainer").children];
+      if (cards.length === 0) return;
+
+      hintsRemaining--;
+      $("hintsLeft").textContent = hintsRemaining;
+      if (hintsRemaining === 0) $("hintBtn").disabled = true;
+
+      // Select random remaining card
+      const randomCard = cards[Math.floor(Math.random() * cards.length)];
+      const targetCategory = randomCard.dataset.category;
+      const targetZone = $(`zone-${targetCategory}`);
+
+      // Highlight card and target zone
+      randomCard.classList.add("hinted");
+      targetZone.classList.add("over");
+      sound.playTone(880, "sine", 0.3, 0.08);
+
+      $("gameMsg").innerHTML = `💡 <b>Hint:</b> "${randomCard.dataset.text}" belongs to <b>${categoryMeta[targetCategory].name}</b>!`;
+      $("gameMsg").className = "game-message";
+
+      setTimeout(() => {
+        randomCard.classList.remove("hinted");
+        targetZone.classList.remove("over");
+      }, 2500);
+    });
+
+    // Factoid Modal
+    function openFactModal(title, icon, category, fact) {
+      sound.playSelect();
+      $("modalIcon").textContent = icon;
+      $("modalTitle").textContent = title;
+      $("modalCategoryTag").textContent = categoryMeta[category].name;
+      $("modalCategoryTag").className = `fact-category-tag review-pill ${category}`;
+      $("modalBody").textContent = fact;
+      $("factModal").classList.add("active");
+    }
+
+    $("closeModalBtn").addEventListener("click", () => {
+      $("factModal").classList.remove("active");
+    });
+
+    $("factModal").addEventListener("click", e => {
+      if (e.target === $("factModal")) {
+        $("factModal").classList.remove("active");
+      }
+    });
+
+    // END GAME & SUMMARY
+    function endGame(isVictory, reasonMsg = "") {
+      showScreen("resultScreen");
+
+      const timeElapsed = Math.round((Date.now() - startTime) / 1000);
+      const accuracy = totalAttempts > 0 ? Math.round((correctPlacements / totalAttempts) * 100) : 100;
+
+      // Time bonus for timed mode
+      let timeBonus = 0;
+      if (isVictory && gameMode === "timed" && timeLeft > 0) {
+        timeBonus = timeLeft * 3;
+        score += timeBonus;
+      }
+
+      if (isVictory) {
+        sound.playFanfare();
+        fireConfetti(120);
+        $("resultEmoji").textContent = "🏆";
+        $("resultHeading").textContent = "Sensational Victory!";
+        $("resultStars").textContent = accuracy >= 90 ? "⭐⭐⭐" : (accuracy >= 70 ? "⭐⭐" : "⭐");
+      } else {
+        sound.playError();
+        $("resultEmoji").textContent = "💪";
+        $("resultHeading").textContent = reasonMsg || "Good Effort!";
+        $("resultStars").textContent = "⭐";
+      }
+
+      // Animate score counter
+      $("finalScoreVal").textContent = score;
+      $("statAccuracy").textContent = `${accuracy}%`;
+      $("statMaxStreak").textContent = maxStreak;
+      $("statTimeTaken").textContent = `${timeElapsed}s`;
+
+      // High Score in LocalStorage
+      const bestScore = parseInt(localStorage.getItem("anemia_hero_high_score") || "0", 10);
+      if (score > bestScore) {
+        localStorage.setItem("anemia_hero_high_score", score);
+        $("bestScoreVal").textContent = score;
+        $("highScoreTag").textContent = "🎉 NEW PERSONAL BEST!";
+      } else {
+        $("bestScoreVal").textContent = bestScore;
+        $("highScoreTag").textContent = `🏆 Personal Best: ${bestScore}`;
+      }
+
+      // Populate Clinical Review List
+      const reviewList = $("reviewList");
+      reviewList.innerHTML = "";
+      items.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "review-item";
+        row.innerHTML = `
+          <span class="review-pill ${item.category}">${categoryMeta[item.category].name}</span>
+          <span class="review-text"><b>${item.icon} ${item.text}:</b> ${item.fact}</span>
+        `;
+        reviewList.appendChild(row);
+      });
+    }
+
+    // Button Triggers
+    $("startBtn").addEventListener("click", startGame);
+    $("restartBtn").addEventListener("click", startGame);
+    $("playAgainBtn").addEventListener("click", startGame);
+  </script>
+</body>
+</html>
