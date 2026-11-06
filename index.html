@@ -3,1303 +3,343 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anemia Hero — Health Sorting Challenge</title>
+  <meta name="description" content="Anemia Game Zone — Two interactive educational games on anemia awareness, iron nutrition, and health prevention in English and Kannada.">
+  <title>Anemia Game Zone | ರಕ್ತಹೀನತೆ ಜಾಗೃತಿ ಆಟಗಳು</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="portal.css">
 </head>
 <body>
   <!-- Ambient floating red blood cells background -->
   <canvas id="ambientCanvas"></canvas>
-  <!-- Confetti canvas for victory celebration -->
-  <canvas id="confettiCanvas"></canvas>
 
-  <div class="app">
-    <!-- Top Branding & Navigation Bar -->
-    <header class="brand-bar">
-      <div class="brand-logo">
-        <span class="logo-icon">🩸</span>
-        <div>
-          <h1 class="brand-title">Anemia Hero</h1>
-          <p class="brand-subtitle">Health Sorting Challenge</p>
+  <div class="portal-container">
+    <!-- Top Header Bar -->
+    <header class="top-header">
+      <div class="brand-section">
+        <div class="brand-icon-wrap">🩸</div>
+        <div class="brand-texts">
+          <h1>Anemia Game Zone</h1>
+          <div class="initiative-tag">
+            <span></span> St. John's Research Institute (SJRI) • Health Literacy
+          </div>
         </div>
       </div>
-      <div class="nav-actions">
-        <button id="langToggle" class="lang-toggle-btn" title="Toggle Language Mode">🌐 EN + ಕನ್ನಡ</button>
-        <button id="soundToggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+      <div class="top-actions">
+        <button id="langToggleBtn" class="lang-btn" title="Toggle Language View">
+          🌐 <span id="langBtnText">EN + ಕನ್ನಡ</span>
+        </button>
       </div>
     </header>
 
-    <!-- START SCREEN -->
-    <section id="startScreen" class="screen active">
-      <div class="start-container">
-        <div class="hero-badge">✨ Interactive Health Challenge / ರಕ್ತಹೀನತೆ ಜಾಗೃತಿ ಸವಾಲು</div>
-        <h2 class="start-title">Master the Balance:<br><span>Become an Anemia Hero!</span><br><span style="font-size:22px; font-family:'Noto Sans Kannada'; font-weight:800; color:#1e40af; display:block; margin-top:4px;">ರಕ್ತಹೀನತೆ ತಡೆಗಟ್ಟುವ ಜಾಗೃತಿ ಆಟ</span></h2>
-        <p class="start-desc">
-          Test your medical intuition! Classify 15 clinical cards into <b>Symptoms</b>, underlying <b>Causes</b>, and daily <b>Prevention</b> habits.<br>
-          <span style="font-family:'Noto Sans Kannada'; color:#1e40af; font-size:14px; font-weight:600; display:block; margin-top:6px;">15 ಕಾರ್ಡ್‌ಗಳನ್ನು ಲಕ್ಷಣಗಳು, ಕಾರಣಗಳು ಮತ್ತು ತಡೆಗಟ್ಟುವಿಕೆ ವಿಭಾಗಗಳಿಗೆ ಸರಿಯಾಗಿ ಜೋಡಿಸಿ!</span>
-        </p>
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="hero-pill">
+        ✨ Interactive Health Education / ಸಂವಾದಾತ್ಮಕ ಶಿಕ್ಷಣ
+      </div>
+      <h2>
+        Master Iron Nutrition & <br>
+        <span class="gradient-text">Defeat Anemia Through Play!</span>
+      </h2>
+      <span class="hero-kn-title">ಆಟದ ಮೂಲಕ ರಕ್ತಹೀನತೆ ತಡೆಗಟ್ಟಿ, ಆರೋಗ್ಯವಂತರಾಗಿ!</span>
+      <p>
+        Explore two exciting, evidence-based educational games designed to make clinical health concepts, dietary iron sources, and symptoms fun, engaging, and memorable.
+        <span class="hero-kn-sub">ರಕ್ತಹೀನತೆಯ ಲಕ್ಷಣಗಳು, ಕಾರಣಗಳು ಹಾಗೂ ಪೌಷ್ಟಿಕ ಆಹಾರದ ಕುರಿತು ತಿಳಿದುಕೊಳ್ಳಲು ಕೆಳಗಿನ ಎರಡು ಆಕರ್ಷಕ ಆಟಗಳನ್ನು ಆಡಿ!</span>
+      </p>
 
-        <!-- Mode selector -->
-        <div class="mode-select-wrap">
-          <button class="mode-btn active" id="modeTimed" data-mode="timed">⏱️ Timed Sprint (180s)</button>
-          <button class="mode-btn" id="modeZen" data-mode="zen">🧘 Casual Practice (No Timer)</button>
-        </div>
-
-        <div class="features-grid">
-          <div class="feature-card">
-            <span class="feature-icon">🃏</span>
-            <span class="feature-title">15 Clinical Cards</span>
-            <span class="feature-subtitle">Symptoms, causes & diets</span>
-          </div>
-          <div class="feature-card">
-            <span class="feature-icon">🔥</span>
-            <span class="feature-title">Combo Streaks</span>
-            <span class="feature-subtitle">Score multiplier bonuses</span>
-          </div>
-          <div class="feature-card">
-            <span class="feature-icon">❤️</span>
-            <span class="feature-title">3 Health Lives</span>
-            <span class="feature-subtitle">Careful sorting matters</span>
-          </div>
-          <div class="feature-card">
-            <span class="feature-icon">💡</span>
-            <span class="feature-title">Smart Hints</span>
-            <span class="feature-subtitle">Help when you need it</span>
-          </div>
-        </div>
-
-        <button class="btn" id="startBtn">
-          <span>🎮 Start Game</span>
-        </button>
+      <div class="highlights-bar">
+        <div class="highlight-chip">🎮 2 Unique Games</div>
+        <div class="highlight-chip">🇮🇳 English & ಕನ್ನಡ Bilingual</div>
+        <div class="highlight-chip">📱 Mobile & Desktop Optimized</div>
+        <div class="highlight-chip">🩺 Clinical Knowledge-Based</div>
       </div>
     </section>
 
-    <!-- GAMEPLAY SCREEN -->
-    <section id="gameScreen" class="screen">
-      <!-- Status & Stats Bar -->
-      <div class="game-header">
-        <div class="game-stats-row">
-          <div class="stats-group">
-            <div class="stat-pill">⭐ <span class="stat-value" id="scoreVal">0</span></div>
-            <div class="stat-pill streak" id="streakPill">🔥 <span class="stat-value" id="streakVal">Streak 0</span></div>
-            <div class="stat-pill" id="livesPill">❤️ <span class="stat-value" id="livesVal">❤️❤️❤️</span></div>
+    <!-- Games Showcase Section -->
+    <section class="games-showcase">
+      <div class="section-label">
+        <h3>🎯 Choose Your Challenge</h3>
+        <span class="kn-sub">ನಿಮ್ಮ ಆಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ</span>
+      </div>
+
+      <div class="games-grid">
+        <!-- GAME 1: Anemia Hero (Card Sorting) -->
+        <article class="game-card">
+          <div class="card-top">
+            <span class="game-badge">🃏 Card Sorting Challenge</span>
+            <span class="game-icon-large">🃏</span>
           </div>
-          <div class="stats-group">
-            <div class="stat-pill" id="timerPill">⏱️ <span class="stat-value" id="timerVal">180s</span></div>
-            <div class="stat-pill">📋 <span class="stat-value" id="remainingVal">15 cards left</span></div>
-          </div>
-        </div>
-        <div class="timer-track" id="timerTrack">
-          <div class="timer-fill" id="timerBar"></div>
-        </div>
-      </div>
 
-      <!-- Mission helper banner -->
-      <div class="mission-banner">
-        <div class="mission-text" id="missionText">
-          🎮 <b>Mission / ಗುರಿ:</b> Drag each card into the matching category, or tap a card then tap the category.<br>
-          <span class="mission-kn">ಪ್ರತಿಯೊಂದು ಕಾರ್ಡ್ ಅನ್ನು ಸರಿಯಾದ ವಿಭಾಗಕ್ಕೆ ಎಳೆಯಿರಿ ಅಥವಾ ಮುಟ್ಟಿ ಆಯ್ಕೆಮಾಡಿ.</span>
-        </div>
-        <button class="hint-btn" id="hintBtn">💡 Hint (<span id="hintsLeft">2</span> left)</button>
-      </div>
+          <h4 class="game-title">Anemia Hero: Health Sorting</h4>
+          <span class="game-title-kn">ರಕ್ತಹೀನತೆ ಹೀರೋ: ಆರೋಗ್ಯ ವಿಂಗಡಣೆ ಸವಾಲು</span>
 
-      <!-- Active Card Spotlight (Mobile One-Tap Quick Mode) -->
-      <div class="mobile-spotlight-card" id="mobileSpotlightCard">
-        <div class="spotlight-top-badge">🎯 Current Card / ಪ್ರಸ್ತುತ ಕಾರ್ಡ್</div>
-        <div class="spotlight-main">
-          <span class="spotlight-icon" id="spotlightIcon">😮‍💨</span>
-          <div class="spotlight-info">
-            <h3 class="spotlight-title" id="spotlightTitle">Shortness of breath</h3>
-            <p class="spotlight-kn" id="spotlightKn">ಉಸಿರಾಟದ ತೊಂದರೆ</p>
-            <p class="spotlight-hint" id="spotlightHint">Tap a category below 👇 or swipe</p>
-          </div>
-        </div>
-        <div class="spotlight-swipe-guide">
-          <span>👈 Left: Symptoms / ಲಕ್ಷಣಗಳು</span>
-          <span>☝️ Up: Causes / ಕಾರಣಗಳು</span>
-          <span>Right: Prevention / ತಡೆಗಟ್ಟುವಿಕೆ 👉</span>
-        </div>
-      </div>
+          <p class="game-desc">
+            Test your medical intuition! Classify 15 clinical cards into <b>Symptoms</b>, <b>Causes</b>, and daily <b>Prevention</b> habits. Features Combo Streaks, 3 Health Lives, and immediate medical explanations.
+            <span class="kn-text">15 ಕಾರ್ಡ್‌ಗಳನ್ನು ಲಕ್ಷಣಗಳು, ಕಾರಣಗಳು ಮತ್ತು ತಡೆಗಟ್ಟುವಿಕೆ ಎಂದು ವಿಂಗಡಿಸಿ ಸ್ಕೋರ್ ಹೆಚ್ಚಿಸಿಕೊಳ್ಳಿ!</span>
+          </p>
 
-      <!-- Unsorted Cards Section -->
-      <div class="cards-section-title">
-        <h4><span>🃏 Cards to Classify</span></h4>
-        <span class="cards-count-badge" id="cardBadge">15 remaining</span>
-      </div>
-      <div id="cardsContainer" class="cards-grid"></div>
-
-      <!-- Mobile Placed Drawer Toggle -->
-      <div class="mobile-placed-toggle">
-        <button class="btn secondary" id="togglePlacedBtn" type="button">
-          📋 View Placed Cards (<span id="placedTotalBadge">0</span>/15) ▼
-        </button>
-      </div>
-
-      <!-- Drop Zones -->
-      <div class="zones-grid" id="zonesGrid">
-        <!-- Symptoms -->
-        <section class="zone symptoms" data-zone="symptoms" id="zone-symptoms">
-          <div class="zone-header">
-            <div class="zone-title-wrap">
-              <h3 class="zone-title">🔴 Symptoms <span class="kn-sub">/ ಲಕ್ಷಣಗಳು</span></h3>
-              <p class="zone-desc">Physical sensations / ರೋಗಿಯು ಅನುಭವಿಸುವ ಲಕ್ಷಣಗಳು</p>
+          <!-- Mini Visual Representation -->
+          <div class="card-preview-box">
+            <div class="preview-tile symptoms">
+              🔴 Symptoms<br><span style="font-size:10px; color:#e11d48; font-family:'Noto Sans Kannada';">ಲಕ್ಷಣಗಳು</span>
             </div>
-            <span class="zone-counter" id="counter-symptoms">0 / 7</span>
-          </div>
-          <div class="placed-tray"></div>
-        </section>
-
-        <!-- Causes & Reasons -->
-        <section class="zone reasons" data-zone="reasons" id="zone-reasons">
-          <div class="zone-header">
-            <div class="zone-title-wrap">
-              <h3 class="zone-title">🟣 Causes & Reasons <span class="kn-sub">/ ಕಾರಣಗಳು</span></h3>
-              <p class="zone-desc">Nutritional deficiencies & medical factors / ರಕ್ತಹೀನತೆಗೆ ಕಾರಣಗಳು</p>
+            <div class="preview-tile causes">
+              🟡 Causes<br><span style="font-size:10px; color:#d97706; font-family:'Noto Sans Kannada';">ಕಾರಣಗಳು</span>
             </div>
-            <span class="zone-counter" id="counter-reasons">0 / 5</span>
-          </div>
-          <div class="placed-tray"></div>
-        </section>
-
-        <!-- Prevention -->
-        <section class="zone prevention" data-zone="prevention" id="zone-prevention">
-          <div class="zone-header">
-            <div class="zone-title-wrap">
-              <h3 class="zone-title">🟢 Prevention <span class="kn-sub">/ ತಡೆಗಟ್ಟುವಿಕೆ</span></h3>
-              <p class="zone-desc">Healthy diets, iron enhancers & care / ತಡೆಗಟ್ಟುವ ಆಹಾರ ಮತ್ತು ಕ್ರಮಗಳು</p>
+            <div class="preview-tile prevention">
+              🟢 Prevention<br><span style="font-size:10px; color:#059669; font-family:'Noto Sans Kannada';">ತಡೆಗಟ್ಟುವಿಕೆ</span>
             </div>
-            <span class="zone-counter" id="counter-prevention">0 / 3</span>
           </div>
-          <div class="placed-tray"></div>
-        </section>
+
+          <div class="card-tags">
+            <span class="tag-pill">⏱️ 180s Timed / Zen Mode</span>
+            <span class="tag-pill">🔥 Combo Multipliers</span>
+            <span class="tag-pill">❤️ 3 Health Lives</span>
+            <span class="tag-pill">📱 Mobile Touch Dock</span>
+          </div>
+
+          <div class="card-cta">
+            <a href="sorting-game.html" class="play-btn">
+              <span>Play Anemia Hero 🎮</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- GAME 2: Snake & Ladder -->
+        <article class="game-card card-blue">
+          <div class="card-top">
+            <span class="game-badge">🎲 100-Square Board Game</span>
+            <span class="game-icon-large">🎲</span>
+          </div>
+
+          <h4 class="game-title">Anemia Snake & Ladder</h4>
+          <span class="game-title-kn">ರಕ್ತಹೀನತೆ ಹಾವು ಮತ್ತು ಏಣಿ ಆಟ</span>
+
+          <p class="game-desc">
+            The classic board game revitalized for health literacy! Climb 6 ladders of iron-rich habits (drumstick leaves, pulses), avoid 6 snakes of dietary risks (tea with meals), and answer 20 clinical quiz challenges!
+            <span class="kn-text">ಆರೋಗ್ಯಕರ ಆಹಾರದ ಅಭ್ಯಾಸಗಳಿಂದ ಏಣಿ ಏರಿ, ಅಪಾಯದ ಹಾವುಗಳಿಂದ ತಪ್ಪಿಸಿಕೊಂಡು ರಸಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ!</span>
+          </p>
+
+          <!-- Mini Visual Representation -->
+          <div class="card-preview-box">
+            <div class="preview-board-mini">
+              <div class="mini-cell">1</div>
+              <div class="mini-cell ladder">↑</div>
+              <div class="mini-cell special">?</div>
+              <div class="mini-cell">4</div>
+              <div class="mini-cell">5</div>
+              <div class="mini-cell">6</div>
+              <div class="mini-cell special">?</div>
+              <div class="mini-cell">8</div>
+              <div class="mini-cell ladder">↑</div>
+              <div class="mini-cell">10</div>
+            </div>
+            <div style="font-size: 28px; line-height: 1;">🪜 🐍</div>
+            <div style="text-align: right; font-size: 12px; font-weight: 800; color: #1e3a8a;">
+              100 Squares<br><span style="font-size: 10px; color: #64748b;">1 or 2 Players</span>
+            </div>
+          </div>
+
+          <div class="card-tags">
+            <span class="tag-pill">👥 1 or 2 Player Modes</span>
+            <span class="tag-pill">🪜 6 Nutrition Ladders</span>
+            <span class="tag-pill">🐍 6 Risk Snakes</span>
+            <span class="tag-pill">🧠 20 Quiz Challenges</span>
+          </div>
+
+          <div class="card-cta">
+            <a href="snake-and-ladder.html" class="play-btn">
+              <span>Play Snake & Ladder 🎲</span>
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Educational Knowledge Section -->
+    <section class="knowledge-section">
+      <div class="knowledge-header">
+        <h3>💡 Why Anemia Awareness Matters</h3>
+        <span class="kn-sub">ರಕ್ತಹೀನತೆ ಕುರಿತು ಪ್ರಮುಖ ಆರೋಗ್ಯ ಮಾಹಿತಿ</span>
       </div>
 
-      <!-- Feedback message toast -->
-      <div id="gameMsg" class="game-message"></div>
-
-      <!-- Controls -->
-      <div class="game-controls">
-        <button class="btn secondary" id="restartBtn">↻ Restart Game</button>
-      </div>
-
-      <!-- Fixed Sticky Bottom Category Dock (Mobile Quick Sort) -->
-      <div class="mobile-category-dock" id="mobileCategoryDock">
-        <div class="dock-prompt-bar">
-          <span>One-Tap Quick Sort:</span>
-          <span class="dock-prompt-text" id="dockPromptText">Select Category</span>
+      <div class="info-cards-grid">
+        <div class="info-card">
+          <span class="info-icon">🩸</span>
+          <h4>What is Anemia?</h4>
+          <span class="kn-info-title">ರಕ್ತಹೀನತೆ ಎಂದರೇನು?</span>
+          <p>
+            Anemia occurs when your blood has a lower than normal amount of healthy red blood cells or hemoglobin, reducing oxygen supply to tissues and leading to fatigue and weakness.
+            <span class="kn-info-desc">ರಕ್ತದಲ್ಲಿ ಹಿಮೋಗ್ಲೋಬಿನ್ ಅಥವಾ ಕೆಂಪು ರಕ್ತಕಣಗಳ ಸಂಖ್ಯೆ ಕಡಿಮೆಯಾದಾಗ ದೇಹಕ್ಕೆ ಆಮ್ಲಜನಕ ಕಡಿಮೆ ದೊರೆತು ದಣಿವು ಉಂಟಾಗುತ್ತದೆ.</span>
+          </p>
         </div>
-        <div class="dock-buttons-row">
-          <button type="button" class="dock-cat-btn symptoms" data-zone="symptoms" id="dockBtn-symptoms">
-            <span class="btn-icon">🔴</span>
-            <span class="btn-name">Symptoms <small class="btn-kn">ಲಕ್ಷಣಗಳು</small></span>
-            <span class="btn-count" id="mCount-symptoms">0/7</span>
-          </button>
-          <button type="button" class="dock-cat-btn reasons" data-zone="reasons" id="dockBtn-reasons">
-            <span class="btn-icon">🟣</span>
-            <span class="btn-name">Causes <small class="btn-kn">ಕಾರಣಗಳು</small></span>
-            <span class="btn-count" id="mCount-reasons">0/5</span>
-          </button>
-          <button type="button" class="dock-cat-btn prevention" data-zone="prevention" id="dockBtn-prevention">
-            <span class="btn-icon">🟢</span>
-            <span class="btn-name">Prevention <small class="btn-kn">ತಡೆಗಟ್ಟುವಿಕೆ</small></span>
-            <span class="btn-count" id="mCount-prevention">0/3</span>
-          </button>
+
+        <div class="info-card">
+          <span class="info-icon">🎯</span>
+          <h4>Vulnerable Groups</h4>
+          <span class="kn-info-title">ಅಧಿಕ ಅಪಾಯ ಯಾರಿಗೆ?</span>
+          <p>
+            Adolescent girls, pregnant women, and young children have high iron demands for growth, development, and maternal health, putting them at elevated risk.
+            <span class="kn-info-desc">ಹದಿಹರೆಯದ ಹೆಣ್ಣುಮಕ್ಕಳು, ಗರ್ಭಿಣಿಯರು ಮತ್ತು ಸಣ್ಣ ಮಕ್ಕಳಿಗೆ ಹೆಚ್ಚಿನ ಕಬ್ಬಿಣಾಂಶ ಅಗತ್ಯವಿರುವುದರಿಂದ ರಕ್ತಹೀನತೆಯ ಅಪಾಯ ಹೆಚ್ಚು.</span>
+          </p>
+        </div>
+
+        <div class="info-card">
+          <span class="info-icon">🥬</span>
+          <h4>Iron Superfoods</h4>
+          <span class="kn-info-title">ಕಬ್ಬಿಣಾಂಶಯುಕ್ತ ಆಹಾರ</span>
+          <p>
+            Drumstick leaves (moringa), amaranth, sprouted green gram, jaggery, and cooking in traditional cast iron vessels naturally enrich dietary iron intake.
+            <span class="kn-info-desc">ನುಗ್ಗೆ ಸೊಪ್ಪು, ದಂಟಿನ ಸೊಪ್ಪು, ಮೊಳಕೆ ಕಾಳುಗಳು ಮತ್ತು ಕಬ್ಬಿಣದ ಬಾಣಲೆಯಲ್ಲಿ ಅಡುಗೆ ಮಾಡುವುದರಿಂದ ಕಬ್ಬಿಣಾಂಶ ಹೆಚ್ಚುತ್ತದೆ.</span>
+          </p>
+        </div>
+
+        <div class="info-card">
+          <span class="info-icon">🍊</span>
+          <h4>Absorption Synergies</h4>
+          <span class="kn-info-title">ಹೀರಿಕೊಳ್ಳುವಿಕೆಯನ್ನು ಹೆಚ್ಚಿಸಿ</span>
+          <p>
+            Vitamin C (lemon, amla, guava) boosts non-heme iron absorption. Avoid drinking tea or coffee immediately before or after meals as tannins block absorption.
+            <span class="kn-info-desc">ನಿಂಬೆಹಣ್ಣು, ನೆಲ್ಲಿಕಾಯಿಯಂತಹ ವಿಟಮಿನ್ C ಆಹಾರ ಕಬ್ಬಿಣ ಹೀರಿಕೊಳ್ಳಲು ಸಹಾಯಕ; ಊಟದ ಜೊತೆಗೆ ಚಹಾ ಕುಡಿಯುವುದನ್ನು ತಪ್ಪಿಸಿ.</span>
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- RESULT SCREEN -->
-    <section id="resultScreen" class="screen">
-      <div class="result-container">
-        <div class="result-trophy" id="resultEmoji">🏆</div>
-        <h2 class="result-title" id="resultHeading">Spectacular Victory!</h2>
-        <div class="result-stars" id="resultStars">⭐⭐⭐</div>
-
-        <div class="score-banner">
-          <div class="score-label">Final Score</div>
-          <div class="score-number" id="finalScoreVal">0</div>
-          <div class="high-score-tag" id="highScoreTag">🏆 Best Score: <span id="bestScoreVal">0</span></div>
-        </div>
-
-        <div class="result-stats-grid">
-          <div class="result-stat-box">
-            <div class="result-stat-val" id="statAccuracy">100%</div>
-            <div class="result-stat-lbl">Accuracy</div>
-          </div>
-          <div class="result-stat-box">
-            <div class="result-stat-val" id="statMaxStreak">0</div>
-            <div class="result-stat-lbl">Max Streak</div>
-          </div>
-          <div class="result-stat-box">
-            <div class="result-stat-val" id="statTimeTaken">0s</div>
-            <div class="result-stat-lbl">Time Taken</div>
-          </div>
-        </div>
-
-        <!-- Educational summary review of all cards -->
-        <div class="review-section">
-          <h3>📖 Clinical Knowledge Guide</h3>
-          <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">Here is the medical breakdown of the items from your game:</p>
-          <div id="reviewList"></div>
-        </div>
-
-        <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
-          <button class="btn" id="playAgainBtn"><span>🔄 Play Again</span></button>
-        </div>
+    <!-- Footer -->
+    <footer class="portal-footer">
+      <p>
+        <b>Anemia Game Zone</b> • Educational Health Project • St. John's Research Institute (SJRI)
+        <span class="footer-kn">ಸಾರ್ವಜನಿಕ ಆರೋಗ್ಯ ಜಾಗೃತಿಗಾಗಿ ರಚಿಸಲಾದ ಶೈಕ್ಷಣಿಕ ಆಟಗಳು</span>
+      </p>
+      <div class="footer-links">
+        <a href="sorting-game.html">🎮 Anemia Hero (Sorting)</a>
+        <span>•</span>
+        <a href="snake-and-ladder.html">🎲 Anemia Snake & Ladder</a>
+        <span>•</span>
+        <a href="https://github.com" target="_blank" rel="noopener">🌐 GitHub Repository</a>
       </div>
-    </section>
-  </div>
-
-  <!-- Educational Factoid Modal -->
-  <div id="factModal" class="fact-modal-backdrop">
-    <div class="fact-modal">
-      <div class="fact-icon" id="modalIcon">💡</div>
-      <h3 class="fact-title" id="modalTitle">Item Title</h3>
-      <div class="fact-category-tag" id="modalCategoryTag">Category</div>
-      <p class="fact-body" id="modalBody">Medical factoid detail.</p>
-      <button class="btn secondary" style="width: 100%;" id="closeModalBtn">Got it!</button>
-    </div>
+    </footer>
   </div>
 
   <script>
-    /* =========================================================================
-       1. GAME DATA: Items with Clinical Context & Categorization
-       ========================================================================= */
-    const items = [
-      {
-        id: "shortness_breath",
-        text: "Shortness of breath",
-        kn: "ಉಸಿರಾಟದ ತೊಂದರೆ",
-        icon: "😮‍💨",
-        category: "symptoms",
-        fact: "Tissues and vital organs receive inadequate oxygen due to low hemoglobin, causing rapid respiratory compensation.",
-        factKn: "ಕಡಿಮೆ ಹಿಮೋಗ್ಲೋಬಿನ್ ಕಾರಣ ಅಂಗಾಂಶಗಳಿಗೆ ಆಮ್ಲಜನಕದ ಕೊರತೆಯಾಗಿ ಉಸಿರಾಟ ವೇಗವಾಗುತ್ತದೆ."
-      },
-      {
-        id: "fast_heartbeat",
-        text: "Fast heartbeat",
-        kn: "ಹೃದಯ ಬಡಿತ ವೇಗವಾಗುವುದು",
-        icon: "💗",
-        category: "symptoms",
-        fact: "The heart accelerates (tachycardia) to pump larger volumes of blood to compensate for deficient oxygen delivery.",
-        factKn: "ಆಮ್ಲಜನಕದ ಕೊರತೆಯನ್ನು ನೀಗಿಸಲು ಹೃದಯವು ರಕ್ತವನ್ನು ವೇಗವಾಗಿ ಪಂಪ್ ಮಾಡುತ್ತದೆ."
-      },
-      {
-        id: "feeling_weak",
-        text: "Feeling weak",
-        kn: "ದೌರ್ಬಲ್ಯ ಅನುಭವಿಸುವುದು",
-        icon: "🪫",
-        category: "symptoms",
-        fact: "Skeletal muscles are deprived of cellular oxygen, impairing mitochondrial ATP energy production.",
-        factKn: "ಸ್ನಾಯುಗಳಿಗೆ ಆಮ್ಲಜನಕದ ಕೊರತೆಯಾಗಿ ಶಕ್ತಿ ಉತ್ಪಾದನೆ ಕುಂಠಿತಗೊಂಡು ಸುಸ್ತು ಉಂಟಾಗುತ್ತದೆ."
-      },
-      {
-        id: "difficulty_concentrating",
-        text: "Difficulty concentrating",
-        kn: "ಗಮನ ಕೇಂದ್ರೀಕರಿಸಲು ಕಷ್ಟವಾಗುವುದು",
-        icon: "🧠",
-        category: "symptoms",
-        fact: "Reduced cerebral oxygen perfusion manifests as brain fog, poor memory retention, and low attention span.",
-        factKn: "ಮೆದುಳಿಗೆ ಆಮ್ಲಜನಕ ಪೂರೈಕೆ ಕಡಿಮೆಯಾಗಿ ಏಕಾಗ್ರತೆ ಮತ್ತು ನೆನಪಿನ ಶಕ್ತಿ ಕುಂಠಿತವಾಗುತ್ತದೆ."
-      },
-      {
-        id: "tired_small_activity",
-        text: "Tired after small activity",
-        kn: "ಸ್ವಲ್ಪ ಕೆಲಸ ಮಾಡಿದರೂ ದಣಿವಾಗುವುದು",
-        icon: "🏃",
-        category: "symptoms",
-        fact: "Extreme exhaustion sets in even after trivial physical tasks because stamina reserve is severely depleted.",
-        factKn: "ದೇಹದಲ್ಲಿ ಶಕ್ತಿಯ ಕೊರತೆಯಿಂದ ಸಣ್ಣ ಕೆಲಸಗಳನ್ನು ಮಾಡಿದರೂ ಅತಿಯಾದ ಆಯಾಸವಾಗುತ್ತದೆ."
-      },
-      {
-        id: "brittle_nails",
-        text: "Brittle nails",
-        kn: "ಉಗುರುಗಳು ಸುಲಭವಾಗಿ ಮುರಿಯುವುದು",
-        icon: "💅",
-        category: "symptoms",
-        fact: "Iron deficiency causes impaired keratin synthesis, leading to thin, brittle, or spoon-shaped nails (koilonychia).",
-        factKn: "ಕಬ್ಬಿಣಾಂಶದ ಕೊರತೆಯಿಂದ ಉಗುರುಗಳು ತೆಳುವಾಗಿ, ಸುಲಭವಾಗಿ ಮುರಿಯುತ್ತವೆ (ಕೊಯಿಲೋನಿಕಿಯಾ)."
-      },
-      {
-        id: "pica_cravings",
-        text: "Pica / craving non-food items",
-        kn: "ಆಹಾರವಲ್ಲದ ವಸ್ತುಗಳನ್ನು ತಿನ್ನಬೇಕೆಂಬ ಬಯಕೆ (ಪಿಕಾ)",
-        icon: "🧊",
-        category: "symptoms",
-        fact: "Severe iron deficiency often triggers compulsive cravings for ice (pagophagia), chalk, starch, or soil.",
-        factKn: "ತೀವ್ರ ರಕ್ತಹೀನತೆಯು ಮಂಜುಗಡ್ಡೆ, ಮಣ್ಣು, ಸೀಮೆಸುಣ್ಣ ತಿನ್ನುವ ತೀವ್ರ ಹಂಬಲವನ್ನು ಉಂಟುಮಾಡುತ್ತದೆ."
-      },
-      {
-        id: "heavy_bleeding",
-        text: "Heavy menstrual bleeding",
-        kn: "ಅತಿಯಾದ ಮುಟ್ಟಿನ ರಕ್ತಸ್ರಾವ",
-        icon: "🩸",
-        category: "reasons",
-        fact: "Menorrhagia produces recurrent blood loss exceeding iron replenishment, making it a leading cause of anemia in women.",
-        factKn: "ಹೆಚ್ಚಿನ ರಕ್ತಸ್ರಾವದಿಂದ ದೇಹದಲ್ಲಿನ ಕಬ್ಬಿಣದ ಅಂಶ ಕಡಿಮೆಯಾಗಿ ರಕ್ತಹೀನತೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ."
-      },
-      {
-        id: "low_iron_intake",
-        text: "Low iron intake",
-        kn: "ಆಹಾರದಲ್ಲಿ ಕಬ್ಬಿಣಾಂಶ ಕಡಿಮೆ ಇರುವುದು",
-        icon: "🥗",
-        category: "reasons",
-        fact: "Diets deficient in iron-dense food staples fail to meet the daily metabolic requirements of the bone marrow.",
-        factKn: "ದೈನಂದಿನ ಆಹಾರದಲ್ಲಿ ಕಬ್ಬಿಣಾಂಶಯುಕ್ತ ಆಹಾರಗಳ ಕೊರತೆಯು ಕೆಂಪು ರಕ್ತಕಣಗಳ ಉತ್ಪಾದನೆ ಕುಂಠಿತಗೊಳಿಸುತ್ತದೆ."
-      },
-      {
-        id: "b12_deficiency",
-        text: "Vitamin B12 deficiency",
-        kn: "ವಿಟಮಿನ್ B12 ಕೊರತೆ",
-        icon: "🧬",
-        category: "reasons",
-        fact: "Vitamin B12 is essential for DNA synthesis during erythrocyte division; its absence causes megaloblastic anemia.",
-        factKn: "ವಿಟಮಿನ್ B12 ಕೊರತೆಯು ಆರೋಗ್ಯಕರ ಕೆಂಪು ರಕ್ತಕಣಗಳ ಬೆಳವಣಿಗೆಗೆ ಅಡ್ಡಿಯಾಗುತ್ತದೆ."
-      },
-      {
-        id: "folate_deficiency",
-        text: "Folate deficiency",
-        kn: "ಫೋಲೇಟ್ ಕೊರತೆ",
-        icon: "🥦",
-        category: "reasons",
-        fact: "Folate (Vitamin B9) is required for rapid red blood cell maturation. Deficiency results in abnormally enlarged cells.",
-        factKn: "ಫೋಲೇಟ್ (ವಿಟಮಿನ್ B9) ಕೊರತೆಯಿಂದ ರಕ್ತಕಣಗಳ ಪಕ್ವತೆ ಕಡಿಮೆಯಾಗುತ್ತದೆ."
-      },
-      {
-        id: "long_term_illness",
-        text: "Long-term illness",
-        kn: "ದೀರ್ಘಕಾಲದ ಅನಾರೋಗ್ಯ",
-        icon: "🏥",
-        category: "reasons",
-        fact: "Chronic inflammatory illnesses trigger hepcidin elevation, which locks iron within storage macrophages.",
-        factKn: "ದೀರ್ಘಕಾಲದ ಕಾಯಿಲೆಗಳು ರಕ್ತಕಣಗಳ ನೈಸರ್ಗಿಕ ಉತ್ಪಾದನೆಯನ್ನು ಕುಂಠಿತಗೊಳಿಸುತ್ತವೆ."
-      },
-      {
-        id: "eat_iron_rich",
-        text: "Eat iron-rich foods",
-        kn: "ಕಬ್ಬಿಣಾಂಶ ಸಮೃದ್ಧ ಆಹಾರ ಸೇವಿಸಿ",
-        icon: "🥬",
-        category: "prevention",
-        fact: "Consuming dark leafy greens, legumes, dates, poultry, and fortified cereals replenishes ferritin storage levels.",
-        factKn: "ಹಸಿರು ಸೊಪ್ಪುಗಳು, ಕಾಳುಗಳು, ಖರ್ಜೂರ ಮತ್ತು ಬೆಲ್ಲ ಸೇವನೆಯು ರಕ್ತದಲ್ಲಿ ಕಬ್ಬಿಣವನ್ನು ಹೆಚ್ಚಿಸುತ್ತದೆ."
-      },
-      {
-        id: "iron_advised",
-        text: "Take iron only when advised",
-        kn: "ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರ ಸಲಹೆಯಂತೆ ಮಾತ್ರ ಕಬ್ಬಿಣದ ಮಾತ್ರೆಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ",
-        icon: "💊",
-        category: "prevention",
-        fact: "Iron supplementation requires accurate clinical dosing to prevent toxicity or gastrointestinal side effects.",
-        factKn: "ವೈದ್ಯರು ಅಥವಾ ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರ ಸೂಕ್ತ ಸಲಹೆಯ ಮೇರೆಗೆ ಮಾತ್ರ ಮಾತ್ರೆಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಬೇಕು."
-      },
-      {
-        id: "vit_c_iron",
-        text: "Eat vitamin-C-rich foods with iron",
-        kn: "ಕಬ್ಬಿಣಾಂಶಯುಕ್ತ ಆಹಾರದ ಜೊತೆಗೆ ವಿಟಮಿನ್ C ಸಮೃದ್ಧ ಆಹಾರ ಸೇವಿಸಿ",
-        icon: "🍊",
-        category: "prevention",
-        fact: "Ascorbic acid (Vitamin C) reduces non-heme ferric iron (Fe3+) into soluble ferrous iron (Fe2+), boosting gut absorption by up to 3x.",
-        factKn: "ನೆಲ್ಲಿಕಾಯಿ, ಕಿತ್ತಳೆ, ನಿಂಬೆಯಂತಹ ವಿಟಮಿನ್ C ಆಹಾರಗಳು ಕಬ್ಬಿಣಾಂಶವನ್ನು ದೇಹವು ಹೀರಿಕೊಳ್ಳಲು ನೆರವಾಗುತ್ತವೆ."
-      }
-    ];
-
-    const categoryMeta = {
-      symptoms: { name: "Symptoms", kn: "ಲಕ್ಷಣಗಳು", color: "#e11d48", total: 7 },
-      reasons: { name: "Causes & Reasons", kn: "ಕಾರಣಗಳು", color: "#7c3aed", total: 5 },
-      prevention: { name: "Prevention", kn: "ತಡೆಗಟ್ಟುವಿಕೆ", color: "#059669", total: 3 }
-    };
-
-    /* =========================================================================
-       2. WEB AUDIO SYNTHESIZER (No external audio files needed!)
-       ========================================================================= */
-    class SoundEngine {
-      constructor() {
-        this.ctx = null;
-        this.muted = localStorage.getItem("anemia_hero_muted") === "true";
-      }
-
-      init() {
-        if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) this.ctx = new AudioContext();
-        }
-        if (this.ctx && this.ctx.state === "suspended") {
-          this.ctx.resume();
-        }
-      }
-
-      toggleMute() {
-        this.muted = !this.muted;
-        localStorage.setItem("anemia_hero_muted", this.muted);
-        return !this.muted;
-      }
-
-      playTone(freq, type = "sine", duration = 0.12, gainVal = 0.08) {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start();
-          osc.stop(this.ctx.currentTime + duration);
-        } catch(e) {}
-      }
-
-      playSuccess(streak = 0) {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        // Arpeggiated cheerful chime
-        const base = 523.25; // C5
-        const streakBonus = Math.min(streak * 30, 200);
-        const notes = [base + streakBonus, (base * 1.25) + streakBonus, (base * 1.5) + streakBonus];
-        notes.forEach((freq, idx) => {
-          setTimeout(() => {
-            this.playTone(freq, "triangle", 0.15, 0.07);
-          }, idx * 45);
-        });
-      }
-
-      playStreakMilestone() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        [523, 659, 784, 1046].forEach((freq, i) => {
-          setTimeout(() => this.playTone(freq, "sine", 0.22, 0.09), i * 60);
-        });
-      }
-
-      playError() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(160, this.ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.22);
-          gain.gain.setValueAtTime(0.09, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.22);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start();
-          osc.stop(this.ctx.currentTime + 0.22);
-        } catch(e) {}
-      }
-
-      playSelect() {
-        this.playTone(700, "sine", 0.04, 0.03);
-      }
-
-      playFanfare() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        const fanfare = [
-          { f: 523.25, d: 0.12, t: 0 },
-          { f: 659.25, d: 0.12, t: 120 },
-          { f: 783.99, d: 0.15, t: 240 },
-          { f: 1046.50, d: 0.35, t: 380 }
-        ];
-        fanfare.forEach(n => {
-          setTimeout(() => this.playTone(n.f, "triangle", n.d, 0.1), n.t);
-        });
-      }
-    }
-
-    const sound = new SoundEngine();
-
-    /* =========================================================================
-       3. CANVAS PARTICLES & CONFETTI ENGINE
-       ========================================================================= */
-    const ambientCanvas = document.getElementById("ambientCanvas");
-    const actx = ambientCanvas.getContext("2d");
-    let bloodCells = [];
+    /* ============================================================
+       AMBIENT PARTICLES BACKGROUND (Floating RBCs)
+       ============================================================ */
+    const canvas = document.getElementById("ambientCanvas");
+    const ctx = canvas.getContext("2d");
+    let width, height;
+    let particles = [];
 
     function resizeCanvas() {
-      ambientCanvas.width = window.innerWidth;
-      ambientCanvas.height = window.innerHeight;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     }
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    class BloodCell {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * ambientCanvas.width;
-        this.y = ambientCanvas.height + Math.random() * 80;
-        this.radius = 12 + Math.random() * 18;
-        this.speedY = 0.3 + Math.random() * 0.6;
-        this.speedX = Math.sin(Math.random() * Math.PI) * 0.4;
-        this.angle = Math.random() * Math.PI * 2;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.015;
-        this.opacity = 0.12 + Math.random() * 0.18;
-      }
-      update() {
-        this.y -= this.speedY;
-        this.x += this.speedX;
-        this.angle += this.rotationSpeed;
-        if (this.y < -50) this.reset();
-      }
-      draw() {
-        actx.save();
-        actx.translate(this.x, this.y);
-        actx.rotate(this.angle);
-        actx.beginPath();
-        // Draw red blood cell biconcave disk
-        actx.fillStyle = `rgba(225, 29, 72, ${this.opacity})`;
-        actx.ellipse(0, 0, this.radius, this.radius * 0.7, 0, 0, Math.PI * 2);
-        actx.fill();
-        // Inner dimple
-        actx.beginPath();
-        actx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.8})`;
-        actx.ellipse(0, 0, this.radius * 0.42, this.radius * 0.3, 0, 0, Math.PI * 2);
-        actx.fill();
-        actx.restore();
-      }
-    }
-
-    for (let i = 0; i < 18; i++) {
-      const cell = new BloodCell();
-      cell.y = Math.random() * ambientCanvas.height;
-      bloodCells.push(cell);
-    }
-
-    function animateAmbient() {
-      actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
-      bloodCells.forEach(cell => {
-        cell.update();
-        cell.draw();
+    for (let i = 0; i < 28; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 12 + 8,
+        speedX: (Math.random() - 0.5) * 0.4,
+        speedY: -Math.random() * 0.45 - 0.2,
+        opacity: Math.random() * 0.25 + 0.08,
+        wobble: Math.random() * Math.PI * 2
       });
-      requestAnimationFrame(animateAmbient);
-    }
-    animateAmbient();
-
-    // Confetti System
-    const confettiCanvas = document.getElementById("confettiCanvas");
-    const cctx = confettiCanvas.getContext("2d");
-    let confettiParticles = [];
-    let confettiAnimId = null;
-
-    function resizeConfetti() {
-      confettiCanvas.width = window.innerWidth;
-      confettiCanvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resizeConfetti);
-    resizeConfetti();
-
-    function fireConfetti(count = 70) {
-      const colors = ["#e11d48", "#f43f5e", "#7c3aed", "#a855f7", "#10b981", "#34d399", "#f59e0b", "#3b82f6"];
-      for (let i = 0; i < count; i++) {
-        confettiParticles.push({
-          x: confettiCanvas.width / 2 + (Math.random() - 0.5) * 200,
-          y: confettiCanvas.height / 2 - 50,
-          w: 8 + Math.random() * 8,
-          h: 6 + Math.random() * 6,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          vx: (Math.random() - 0.5) * 16,
-          vy: -8 - Math.random() * 12,
-          rotation: Math.random() * 360,
-          rotationSpeed: (Math.random() - 0.5) * 18,
-          gravity: 0.35,
-          opacity: 1
-        });
-      }
-      if (!confettiAnimId) {
-        animateConfetti();
-      }
     }
 
-    function animateConfetti() {
-      cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-      confettiParticles.forEach((p, idx) => {
-        p.vy += p.gravity;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rotation += p.rotationSpeed;
-        p.opacity -= 0.008;
+    function drawAmbient() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.wobble += 0.02;
+        const wobbleX = Math.sin(p.wobble) * 4;
 
-        cctx.save();
-        cctx.translate(p.x, p.y);
-        cctx.rotate((p.rotation * Math.PI) / 180);
-        cctx.fillStyle = p.color;
-        cctx.globalAlpha = Math.max(p.opacity, 0);
-        cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        cctx.restore();
-
-        if (p.opacity <= 0 || p.y > confettiCanvas.height + 50) {
-          confettiParticles.splice(idx, 1);
+        if (p.y < -30) {
+          p.y = height + 30;
+          p.x = Math.random() * width;
         }
+        if (p.x < -30) p.x = width + 30;
+        if (p.x > width + 30) p.x = -30;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x + wobbleX, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(225, 29, 72, ${p.opacity})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.x + wobbleX, p.y, p.radius * 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * 0.75})`;
+        ctx.fill();
+        ctx.restore();
       });
+      requestAnimationFrame(drawAmbient);
+    }
+    drawAmbient();
 
-      if (confettiParticles.length > 0) {
-        confettiAnimId = requestAnimationFrame(animateConfetti);
-      } else {
-        confettiAnimId = null;
-        cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    /* ============================================================
+       AUDIO FEEDBACK (Web Audio API Synthesizer)
+       ============================================================ */
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
     }
 
-    /* =========================================================================
-       4. GAME STATE & DOM CONTROLLERS
-       ========================================================================= */
-    const $ = id => document.getElementById(id);
-
-    let gameMode = "timed"; // "timed" or "zen"
-    let score = 0;
-    let lives = 3;
-    let streak = 0;
-    let maxStreak = 0;
-    let totalAttempts = 0;
-    let correctPlacements = 0;
-    const TOTAL_TIME = 180;
-    let remainingCards = 15;
-    let selectedElement = null;
-    let timeLeft = TOTAL_TIME;
-    let timerInterval = null;
-    let startTime = 0;
-    let hintsRemaining = 2;
-
-    const zoneCounts = {
-      symptoms: 0,
-      reasons: 0,
-      prevention: 0
-    };
-
-    // Initialize audio icon
-    $("soundToggle").textContent = sound.muted ? "🔇" : "🔊";
-    $("soundToggle").addEventListener("click", () => {
-      const active = sound.toggleMute();
-      $("soundToggle").textContent = active ? "🔊" : "🔇";
-      if (active) sound.playSelect();
-    });
-
-    // Screen switching
-    function showScreen(screenId) {
-      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-      $(screenId).classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    // Mode Selection Buttons
-    $("modeTimed").addEventListener("click", () => {
-      gameMode = "timed";
-      $("modeTimed").classList.add("active");
-      $("modeZen").classList.remove("active");
-      sound.playSelect();
-    });
-
-    $("modeZen").addEventListener("click", () => {
-      gameMode = "zen";
-      $("modeZen").classList.add("active");
-      $("modeTimed").classList.remove("active");
-      sound.playSelect();
-    });
-
-    // Floating score popup
-    function createScorePopup(text, x, y, isStreak = false) {
-      const pop = document.createElement("div");
-      pop.className = "floating-score";
-      pop.textContent = text;
-      if (isStreak) {
-        pop.style.color = "#f59e0b";
-        pop.style.fontSize = "26px";
-      }
-      pop.style.left = `${x}px`;
-      pop.style.top = `${y}px`;
-      document.body.appendChild(pop);
-      setTimeout(() => pop.remove(), 950);
-    }
-
-    // Shuffle Array Utility
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    // Update Category Counters
-    function updateCategoryUI() {
-      ["symptoms", "reasons", "prevention"].forEach(cat => {
-        const count = zoneCounts[cat];
-        const total = categoryMeta[cat].total;
-        const counterEl = $(`counter-${cat}`);
-        const zoneEl = $(`zone-${cat}`);
-        const mCountEl = $(`mCount-${cat}`);
-
-        if (count >= total) {
-          counterEl.textContent = `✓ COMPLETED (${count}/${total})`;
-          zoneEl.classList.add("completed");
-          if (mCountEl) mCountEl.textContent = `✓ ${count}/${total}`;
-        } else {
-          counterEl.textContent = `${count} / ${total}`;
-          zoneEl.classList.remove("completed");
-          if (mCountEl) mCountEl.textContent = `${count}/${total}`;
-        }
-      });
-      if ($("placedTotalBadge")) $("placedTotalBadge").textContent = correctPlacements;
-    }
-
-    // Mobile Selection & Spotlight Controllers
-    function selectCard(cardElement) {
-      if (!cardElement) {
-        selectedElement = null;
-        updateMobileSpotlight(null);
-        return;
-      }
-      document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-      selectedElement = cardElement;
-      cardElement.classList.add("selected");
+    function playClick() {
+      initAudio();
+      if (!audioCtx) return;
       try {
-        cardElement.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(540, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
       } catch(e) {}
-
-      updateMobileSpotlight(cardElement);
-      sound.playSelect();
-      $("gameMsg").innerHTML = `Selected: <b>"${cardElement.dataset.text}"</b> — Tap category below!`;
-      $("gameMsg").className = "game-message";
     }
 
-    function selectNextAvailableCard() {
-      const container = $("cardsContainer");
-      if (!container) return;
-      const cards = [...container.children];
-      if (cards.length > 0) {
-        selectCard(cards[0]);
+    // Attach click sound to interactive buttons & links
+    document.querySelectorAll(".play-btn, .lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => playClick());
+    });
+
+    /* ============================================================
+       LANGUAGE TOGGLE FUNCTIONALITY
+       ============================================================ */
+    const langToggleBtn = document.getElementById("langToggleBtn");
+    const langBtnText = document.getElementById("langBtnText");
+    let langState = 0; // 0 = Both (EN+KN), 1 = English Only, 2 = Kannada Only
+
+    langToggleBtn.addEventListener("click", () => {
+      langState = (langState + 1) % 3;
+      if (langState === 0) {
+        langBtnText.textContent = "EN + ಕನ್ನಡ";
+        document.body.classList.remove("en-only", "kn-only");
+      } else if (langState === 1) {
+        langBtnText.textContent = "English Only";
+        document.body.classList.add("en-only");
+        document.body.classList.remove("kn-only");
       } else {
-        selectCard(null);
-      }
-    }
-
-    function updateMobileSpotlight(cardElement) {
-      const spotlight = $("mobileSpotlightCard");
-      const dockPrompt = $("dockPromptText");
-      if (!spotlight) return;
-
-      if (cardElement) {
-        spotlight.style.opacity = "1";
-        $("spotlightIcon").textContent = cardElement.dataset.icon;
-        $("spotlightTitle").textContent = cardElement.dataset.text;
-        const knEl = $("spotlightKn");
-        if (knEl) knEl.textContent = cardElement.dataset.kn || "";
-        $("spotlightHint").textContent = "Tap category below 👇 or swipe";
-        if (dockPrompt) dockPrompt.textContent = `"${cardElement.dataset.text}"`;
-      } else {
-        spotlight.style.opacity = "0.5";
-        $("spotlightTitle").textContent = "All cards sorted!";
-        const knEl = $("spotlightKn");
-        if (knEl) knEl.textContent = "ಎಲ್ಲಾ ಕಾರ್ಡ್‌ಗಳನ್ನು ಜೋಡಿಸಲಾಗಿದೆ!";
-        $("spotlightHint").textContent = "Great job! / ಅತ್ಯುತ್ತಮ!";
-        if (dockPrompt) dockPrompt.textContent = "Done!";
-      }
-    }
-
-    // START GAME
-    function startGame() {
-      sound.init();
-      sound.playSelect();
-      clearInterval(timerInterval);
-
-      // Reset state
-      score = 0;
-      lives = 3;
-      streak = 0;
-      maxStreak = 0;
-      totalAttempts = 0;
-      correctPlacements = 0;
-      remainingCards = items.length;
-      selectedElement = null;
-      timeLeft = TOTAL_TIME;
-      hintsRemaining = 2;
-      startTime = Date.now();
-      zoneCounts.symptoms = 0;
-      zoneCounts.reasons = 0;
-      zoneCounts.prevention = 0;
-
-      // Update UI elements
-      $("scoreVal").textContent = "0";
-      $("streakVal").textContent = "Streak 0";
-      $("streakPill").classList.remove("active");
-      $("livesVal").textContent = "❤️❤️❤️";
-      $("remainingVal").textContent = `${remainingCards} cards left`;
-      $("cardBadge").textContent = `${remainingCards} remaining`;
-      $("hintsLeft").textContent = hintsRemaining;
-      $("hintBtn").disabled = false;
-      $("gameMsg").textContent = "";
-      $("gameMsg").className = "game-message";
-
-      // Reset zones
-      document.querySelectorAll(".placed-tray").forEach(tray => tray.innerHTML = "");
-      updateCategoryUI();
-
-      // Configure timer track based on mode
-      if (gameMode === "zen") {
-        $("timerPill").style.display = "none";
-        $("timerTrack").style.display = "none";
-        $("missionText").innerHTML = "🧘 <b>Casual Mode:</b> Learn at your own pace! Drag or tap cards to sort them.";
-      } else {
-        $("timerPill").style.display = "inline-flex";
-        $("timerTrack").style.display = "block";
-        $("timerVal").textContent = `${TOTAL_TIME}s`;
-        $("timerBar").style.width = "100%";
-        $("timerBar").className = "timer-fill";
-        $("missionText").innerHTML = "🎮 <b>Mission:</b> Drag a card into the matching category, or tap a card then tap the category zone.";
-      }
-
-      // Render Cards
-      const container = $("cardsContainer");
-      container.innerHTML = "";
-      const shuffled = shuffle(items);
-
-      shuffled.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.draggable = true;
-        card.dataset.id = item.id;
-        card.dataset.category = item.category;
-        card.dataset.text = item.text;
-        card.dataset.kn = item.kn;
-        card.dataset.icon = item.icon;
-        card.dataset.fact = item.fact;
-        card.dataset.factKn = item.factKn;
-
-        card.innerHTML = `
-          <span class="card-icon">${item.icon}</span>
-          <span class="card-label">${item.text}</span>
-          <span class="card-kn">${item.kn}</span>
-        `;
-
-        // Desktop Drag events
-        card.addEventListener("dragstart", e => {
-          e.dataTransfer.setData("text/plain", item.id);
-          card.classList.add("dragging");
-          sound.playSelect();
-        });
-
-        card.addEventListener("dragend", () => {
-          card.classList.remove("dragging");
-        });
-
-        // Touch / Click selection
-        card.addEventListener("click", e => {
-          e.stopPropagation();
-          selectCard(card);
-        });
-
-        container.appendChild(card);
-      });
-
-      // Auto-select first card for seamless one-tap flow
-      selectNextAvailableCard();
-
-      showScreen("gameScreen");
-
-      // Start countdown if timed
-      if (gameMode === "timed") {
-        timerInterval = setInterval(() => {
-          timeLeft--;
-          $("timerVal").textContent = `${timeLeft}s`;
-          const pct = Math.max(0, (timeLeft / TOTAL_TIME) * 100);
-          $("timerBar").style.width = `${pct}%`;
-
-          if (timeLeft <= 45 && timeLeft > 20) {
-            $("timerBar").className = "timer-fill warning";
-          } else if (timeLeft <= 20) {
-            $("timerBar").className = "timer-fill danger";
-          }
-
-          if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            endGame(false, "Time's up!");
-          }
-        }, 1000);
-      }
-    }
-
-    // DROP & PLACEMENT LOGIC
-    function handleDrop(cardElement, targetZoneElement, clientCoords = null) {
-      if (!cardElement || !targetZoneElement) return;
-
-      const targetCategory = targetZoneElement.dataset.zone;
-      const cardCategory = cardElement.dataset.category;
-      totalAttempts++;
-
-      const coords = clientCoords || {
-        x: targetZoneElement.getBoundingClientRect().left + targetZoneElement.offsetWidth / 2,
-        y: targetZoneElement.getBoundingClientRect().top + 50
-      };
-
-      // INCORRECT PLACEMENT
-      if (cardCategory !== targetCategory) {
-        sound.playError();
-        streak = 0;
-        $("streakVal").textContent = "Streak 0";
-        $("streakPill").classList.remove("active");
-
-        if (gameMode === "timed") {
-          lives--;
-          $("livesVal").textContent = "❤️".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, 3 - lives));
-        }
-
-        const actualMeta = categoryMeta[cardCategory];
-        $("gameMsg").innerHTML = `❌ <b>Not quite! / ತಪ್ಪಾಗಿದೆ!</b> "${cardElement.dataset.text} (${cardElement.dataset.kn})" is a <b>${actualMeta.name} / ${actualMeta.kn}</b>.`;
-        $("gameMsg").className = "game-message error";
-
-        // Shake card & spotlight
-        cardElement.animate([
-          { transform: 'translateX(-10px)' },
-          { transform: 'translateX(10px)' },
-          { transform: 'translateX(-6px)' },
-          { transform: 'translateX(6px)' },
-          { transform: 'translateX(0)' }
-        ], { duration: 320 });
-
-        const spotEl = $("mobileSpotlightCard");
-        if (spotEl) {
-          spotEl.animate([
-            { transform: 'translateX(-8px)' },
-            { transform: 'translateX(8px)' },
-            { transform: 'translateX(-4px)' },
-            { transform: 'translateX(4px)' },
-            { transform: 'translateX(0)' }
-          ], { duration: 320 });
-        }
-
-        if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
-
-        if (lives <= 0 && gameMode === "timed") {
-          clearInterval(timerInterval);
-          setTimeout(() => endGame(false, "Out of lives!"), 500);
-        }
-        return;
-      }
-
-      // CORRECT PLACEMENT
-      streak++;
-      if (streak > maxStreak) maxStreak = streak;
-      correctPlacements++;
-
-      let pointsGained = 10;
-      let streakBonusText = "";
-
-      if (streak >= 3) {
-        const bonus = (streak - 2) * 5;
-        pointsGained += bonus;
-        streakBonusText = ` 🔥 +${bonus} Streak Bonus!`;
-        $("streakPill").classList.add("active");
-        if (streak % 3 === 0) sound.playStreakMilestone();
-      }
-
-      score += pointsGained;
-      $("scoreVal").textContent = score;
-      $("streakVal").textContent = `Streak ${streak}`;
-
-      sound.playSuccess(streak);
-      if (navigator.vibrate) navigator.vibrate([30]);
-
-      // Floating score FX
-      createScorePopup(`+${pointsGained}${streakBonusText}`, coords.x, coords.y, streak >= 3);
-
-      // Create mini placed chip
-      const mini = document.createElement("span");
-      mini.className = "mini-badge";
-      mini.innerHTML = `<span>${cardElement.dataset.icon}</span> <span>${cardElement.dataset.text}</span> <span class="mini-kn">(${cardElement.dataset.kn})</span>`;
-      mini.title = "Click to read clinical fact";
-      mini.addEventListener("click", e => {
-        e.stopPropagation();
-        openFactModal(cardElement.dataset.text, cardElement.dataset.icon, cardCategory, cardElement.dataset.fact, cardElement.dataset.kn, cardElement.dataset.factKn);
-      });
-
-      targetZoneElement.querySelector(".placed-tray").appendChild(mini);
-
-      // Remove active card
-      cardElement.remove();
-      selectedElement = null;
-      remainingCards--;
-      zoneCounts[targetCategory]++;
-      updateCategoryUI();
-
-      // Automatically advance to next card for zero-scroll flow
-      selectNextAvailableCard();
-
-      $("remainingVal").textContent = `${remainingCards} cards left`;
-      $("cardBadge").textContent = `${remainingCards} remaining`;
-      $("gameMsg").innerHTML = `✅ <b>Correct! / ಸರಿ!</b> "${cardElement.dataset.text} (${cardElement.dataset.kn})" sorted properly.`;
-      $("gameMsg").className = "game-message correct";
-
-      // If zone completed, burst mini confetti
-      if (zoneCounts[targetCategory] === categoryMeta[targetCategory].total) {
-        fireConfetti(35);
-      }
-
-      // Check win condition
-      if (remainingCards === 0) {
-        clearInterval(timerInterval);
-        setTimeout(() => endGame(true), 600);
-      }
-    }
-
-    // Set up zone listeners (Desktop Drag-and-Drop + Tap-to-Place)
-    document.querySelectorAll(".zone").forEach(zone => {
-      zone.addEventListener("dragover", e => {
-        e.preventDefault();
-        zone.classList.add("over");
-      });
-
-      zone.addEventListener("dragleave", () => {
-        zone.classList.remove("over");
-      });
-
-      zone.addEventListener("drop", e => {
-        e.preventDefault();
-        zone.classList.remove("over");
-        const itemId = e.dataTransfer.getData("text/plain");
-        const card = [...$("cardsContainer").children].find(c => c.dataset.id === itemId);
-        if (card) {
-          handleDrop(card, zone, { x: e.clientX, y: e.clientY });
-        }
-      });
-
-      zone.addEventListener("click", e => {
-        if (selectedElement) {
-          handleDrop(selectedElement, zone, { x: e.clientX, y: e.clientY });
-        }
-      });
-    });
-
-    // Deselect if clicking outside
-    document.addEventListener("click", e => {
-      if (!e.target.closest(".card") && 
-          !e.target.closest(".zone") && 
-          !e.target.closest(".mobile-category-dock") && 
-          !e.target.closest(".mobile-spotlight-card") && 
-          !e.target.closest(".mobile-placed-toggle") &&
-          !e.target.closest("#hintBtn")) {
-        // Do not unselect on mobile so quick buttons stay active
+        langBtnText.textContent = "ಕನ್ನಡ ಮಾತ್ರ";
+        document.body.classList.add("kn-only");
+        document.body.classList.remove("en-only");
       }
     });
-
-    // Mobile Category Dock Listeners (One-Tap Quick Sort)
-    document.querySelectorAll(".dock-cat-btn").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault();
-        if (!selectedElement) {
-          selectNextAvailableCard();
-        }
-        if (!selectedElement) return;
-
-        const zoneCategory = btn.dataset.zone;
-        const targetZone = $(`zone-${zoneCategory}`);
-        if (targetZone) {
-          const rect = btn.getBoundingClientRect();
-          handleDrop(selectedElement, targetZone, {
-            x: rect.left + rect.width / 2,
-            y: rect.top - 20
-          });
-        }
-      });
-    });
-
-    // Mobile Placed Cards Drawer Toggle
-    const toggleBtn = $("togglePlacedBtn");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", () => {
-        const grid = $("zonesGrid");
-        grid.classList.toggle("show-mobile");
-        const isOpen = grid.classList.contains("show-mobile");
-        toggleBtn.innerHTML = isOpen
-          ? `▲ Hide Placed Cards (${correctPlacements}/15)`
-          : `📋 View Placed Cards (${correctPlacements}/15) ▼`;
-      });
-    }
-
-    // Touch Swipe Gestures on Mobile Spotlight Card
-    const spot = $("mobileSpotlightCard");
-    if (spot) {
-      let touchStartX = 0, touchStartY = 0;
-      spot.addEventListener("touchstart", e => {
-        if (e.touches.length === 1) {
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-        }
-      }, { passive: true });
-
-      spot.addEventListener("touchend", e => {
-        if (e.changedTouches.length === 1) {
-          const dx = e.changedTouches[0].clientX - touchStartX;
-          const dy = e.changedTouches[0].clientY - touchStartY;
-          if (!selectedElement) return;
-
-          // Horizontal swipe: Left = symptoms, Right = prevention
-          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-            if (dx < 0) {
-              handleDrop(selectedElement, $("zone-symptoms"));
-            } else {
-              handleDrop(selectedElement, $("zone-prevention"));
-            }
-          } else if (dy < -40 && Math.abs(dy) > Math.abs(dx)) {
-            // Swipe Up = reasons/causes
-            handleDrop(selectedElement, $("zone-reasons"));
-          }
-        }
-      }, { passive: true });
-    }
-
-    // Hint Button
-    $("hintBtn").addEventListener("click", () => {
-      if (hintsRemaining <= 0) return;
-      const cards = [...$("cardsContainer").children];
-      if (cards.length === 0) return;
-
-      hintsRemaining--;
-      $("hintsLeft").textContent = hintsRemaining;
-      if (hintsRemaining === 0) $("hintBtn").disabled = true;
-
-      // Select random remaining card
-      const randomCard = cards[Math.floor(Math.random() * cards.length)];
-      const targetCategory = randomCard.dataset.category;
-      const targetZone = $(`zone-${targetCategory}`);
-
-      // Highlight card and target zone
-      randomCard.classList.add("hinted");
-      targetZone.classList.add("over");
-      sound.playTone(880, "sine", 0.3, 0.08);
-
-      $("gameMsg").innerHTML = `💡 <b>Hint:</b> "${randomCard.dataset.text}" belongs to <b>${categoryMeta[targetCategory].name}</b>!`;
-      $("gameMsg").className = "game-message";
-
-      setTimeout(() => {
-        randomCard.classList.remove("hinted");
-        targetZone.classList.remove("over");
-      }, 2500);
-    });
-
-    // Factoid Modal
-    function openFactModal(title, icon, category, fact, kn = "", factKn = "") {
-      sound.playSelect();
-      $("modalIcon").textContent = icon;
-      $("modalTitle").innerHTML = `${title}<br><span style="font-size:16px; color:#1e40af; font-family:'Noto Sans Kannada', sans-serif;">${kn}</span>`;
-      const catMeta = categoryMeta[category];
-      $("modalCategoryTag").textContent = `${catMeta.name} / ${catMeta.kn}`;
-      $("modalCategoryTag").className = `fact-category-tag review-pill ${category}`;
-      $("modalBody").innerHTML = `${fact}<br><br><span style="color:#1e40af; font-family:'Noto Sans Kannada', sans-serif; font-size:14px; display:block; line-height:1.45;">${factKn}</span>`;
-      $("factModal").classList.add("active");
-    }
-
-    $("closeModalBtn").addEventListener("click", () => {
-      $("factModal").classList.remove("active");
-    });
-
-    $("factModal").addEventListener("click", e => {
-      if (e.target === $("factModal")) {
-        $("factModal").classList.remove("active");
-      }
-    });
-
-    // END GAME & SUMMARY
-    function endGame(isVictory, reasonMsg = "") {
-      showScreen("resultScreen");
-
-      const timeElapsed = Math.round((Date.now() - startTime) / 1000);
-      const accuracy = totalAttempts > 0 ? Math.round((correctPlacements / totalAttempts) * 100) : 100;
-
-      // Time bonus for timed mode
-      let timeBonus = 0;
-      if (isVictory && gameMode === "timed" && timeLeft > 0) {
-        timeBonus = timeLeft * 3;
-        score += timeBonus;
-      }
-
-      if (isVictory) {
-        sound.playFanfare();
-        fireConfetti(120);
-        $("resultEmoji").textContent = "🏆";
-        $("resultHeading").textContent = "Sensational Victory! / ಅದ್ಭುತ ವಿಜಯ!";
-        $("resultStars").textContent = accuracy >= 90 ? "⭐⭐⭐" : (accuracy >= 70 ? "⭐⭐" : "⭐");
-      } else {
-        sound.playError();
-        $("resultEmoji").textContent = "💪";
-        $("resultHeading").textContent = reasonMsg ? `${reasonMsg} / ಪ್ರಯತ್ನ ಮುಂದುವರಿಸಿ!` : "Good Effort! / ಉತ್ತಮ ಪ್ರಯತ್ನ!";
-        $("resultStars").textContent = "⭐";
-      }
-
-      // Animate score counter
-      $("finalScoreVal").textContent = score;
-      $("statAccuracy").textContent = `${accuracy}%`;
-      $("statMaxStreak").textContent = maxStreak;
-      $("statTimeTaken").textContent = `${timeElapsed}s`;
-
-      // High Score in LocalStorage
-      const bestScore = parseInt(localStorage.getItem("anemia_hero_high_score") || "0", 10);
-      if (score > bestScore) {
-        localStorage.setItem("anemia_hero_high_score", score);
-        $("bestScoreVal").textContent = score;
-        $("highScoreTag").textContent = "🎉 NEW PERSONAL BEST / ಹೊಸ ದಾಖಲೆ!";
-      } else {
-        $("bestScoreVal").textContent = bestScore;
-        $("highScoreTag").textContent = `🏆 Personal Best: ${bestScore}`;
-      }
-
-      // Populate Clinical Review List
-      const reviewList = $("reviewList");
-      reviewList.innerHTML = "";
-      items.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "review-item";
-        row.innerHTML = `
-          <span class="review-pill ${item.category}">${categoryMeta[item.category].name} / ${categoryMeta[item.category].kn}</span>
-          <span class="review-text">
-            <b>${item.icon} ${item.text}</b> <span class="card-kn" style="display:inline; margin-left:4px;">(${item.kn})</span>: ${item.fact}
-            <span class="review-fact-kn">${item.factKn}</span>
-          </span>
-        `;
-        reviewList.appendChild(row);
-      });
-    }
-
-    // Language Toggle Listener
-    let currentLangMode = "bilingual";
-    const langBtn = $("langToggle");
-    if (langBtn) {
-      langBtn.addEventListener("click", () => {
-        if (currentLangMode === "bilingual") {
-          currentLangMode = "kn";
-          langBtn.textContent = "🇮🇳 ಕನ್ನಡ (Kannada)";
-          document.body.classList.add("lang-kn-only");
-          document.body.classList.remove("lang-en-only");
-        } else if (currentLangMode === "kn") {
-          currentLangMode = "en";
-          langBtn.textContent = "🇬🇧 English";
-          document.body.classList.add("lang-en-only");
-          document.body.classList.remove("lang-kn-only");
-        } else {
-          currentLangMode = "bilingual";
-          langBtn.textContent = "🌐 EN + ಕನ್ನಡ";
-          document.body.classList.remove("lang-kn-only", "lang-en-only");
-        }
-        sound.playSelect();
-      });
-    }
-
-    // Button Triggers
-    $("startBtn").addEventListener("click", startGame);
-    $("restartBtn").addEventListener("click", startGame);
-    $("playAgainBtn").addEventListener("click", startGame);
   </script>
 </body>
 </html>
