@@ -6,7 +6,7 @@
   <title>Anemia Hero — Health Sorting Challenge</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,6 +26,7 @@
         </div>
       </div>
       <div class="nav-actions">
+        <button id="langToggle" class="lang-toggle-btn" title="Toggle Language Mode">🌐 EN + ಕನ್ನಡ</button>
         <button id="soundToggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
       </div>
     </header>
@@ -33,10 +34,11 @@
     <!-- START SCREEN -->
     <section id="startScreen" class="screen active">
       <div class="start-container">
-        <div class="hero-badge">✨ Interactive Health Challenge</div>
-        <h2 class="start-title">Master the Balance:<br><span>Become an Anemia Hero!</span></h2>
+        <div class="hero-badge">✨ Interactive Health Challenge / ರಕ್ತಹೀನತೆ ಜಾಗೃತಿ ಸವಾಲು</div>
+        <h2 class="start-title">Master the Balance:<br><span>Become an Anemia Hero!</span><br><span style="font-size:22px; font-family:'Noto Sans Kannada'; font-weight:800; color:#1e40af; display:block; margin-top:4px;">ರಕ್ತಹೀನತೆ ತಡೆಗಟ್ಟುವ ಜಾಗೃತಿ ಆಟ</span></h2>
         <p class="start-desc">
-          Test your medical intuition! Classify 15 clinical cards into <b>Symptoms</b>, underlying <b>Causes</b>, and daily <b>Prevention</b> habits before time runs out.
+          Test your medical intuition! Classify 15 clinical cards into <b>Symptoms</b>, underlying <b>Causes</b>, and daily <b>Prevention</b> habits.<br>
+          <span style="font-family:'Noto Sans Kannada'; color:#1e40af; font-size:14px; font-weight:600; display:block; margin-top:6px;">15 ಕಾರ್ಡ್‌ಗಳನ್ನು ಲಕ್ಷಣಗಳು, ಕಾರಣಗಳು ಮತ್ತು ತಡೆಗಟ್ಟುವಿಕೆ ವಿಭಾಗಗಳಿಗೆ ಸರಿಯಾಗಿ ಜೋಡಿಸಿ!</span>
         </p>
 
         <!-- Mode selector -->
@@ -97,25 +99,27 @@
       <!-- Mission helper banner -->
       <div class="mission-banner">
         <div class="mission-text" id="missionText">
-          🎮 <b>Mission:</b> Drag a card into the matching category, or tap a card then tap the category zone.
+          🎮 <b>Mission / ಗುರಿ:</b> Drag each card into the matching category, or tap a card then tap the category.<br>
+          <span class="mission-kn">ಪ್ರತಿಯೊಂದು ಕಾರ್ಡ್ ಅನ್ನು ಸರಿಯಾದ ವಿಭಾಗಕ್ಕೆ ಎಳೆಯಿರಿ ಅಥವಾ ಮುಟ್ಟಿ ಆಯ್ಕೆಮಾಡಿ.</span>
         </div>
         <button class="hint-btn" id="hintBtn">💡 Hint (<span id="hintsLeft">2</span> left)</button>
       </div>
 
       <!-- Active Card Spotlight (Mobile One-Tap Quick Mode) -->
       <div class="mobile-spotlight-card" id="mobileSpotlightCard">
-        <div class="spotlight-top-badge">🎯 Current Card</div>
+        <div class="spotlight-top-badge">🎯 Current Card / ಪ್ರಸ್ತುತ ಕಾರ್ಡ್</div>
         <div class="spotlight-main">
           <span class="spotlight-icon" id="spotlightIcon">😮‍💨</span>
           <div class="spotlight-info">
             <h3 class="spotlight-title" id="spotlightTitle">Shortness of breath</h3>
+            <p class="spotlight-kn" id="spotlightKn">ಉಸಿರಾಟದ ತೊಂದರೆ</p>
             <p class="spotlight-hint" id="spotlightHint">Tap a category below 👇 or swipe</p>
           </div>
         </div>
         <div class="spotlight-swipe-guide">
-          <span>👈 Left: Symptoms</span>
-          <span>☝️ Up: Causes</span>
-          <span>Right: Prevention 👉</span>
+          <span>👈 Left: Symptoms / ಲಕ್ಷಣಗಳು</span>
+          <span>☝️ Up: Causes / ಕಾರಣಗಳು</span>
+          <span>Right: Prevention / ತಡೆಗಟ್ಟುವಿಕೆ 👉</span>
         </div>
       </div>
 
@@ -139,8 +143,8 @@
         <section class="zone symptoms" data-zone="symptoms" id="zone-symptoms">
           <div class="zone-header">
             <div class="zone-title-wrap">
-              <h3 class="zone-title">🔴 Symptoms</h3>
-              <p class="zone-desc">Physical & cognitive sensations felt by patient</p>
+              <h3 class="zone-title">🔴 Symptoms <span class="kn-sub">/ ಲಕ್ಷಣಗಳು</span></h3>
+              <p class="zone-desc">Physical sensations / ರೋಗಿಯು ಅನುಭವಿಸುವ ಲಕ್ಷಣಗಳು</p>
             </div>
             <span class="zone-counter" id="counter-symptoms">0 / 7</span>
           </div>
@@ -151,8 +155,8 @@
         <section class="zone reasons" data-zone="reasons" id="zone-reasons">
           <div class="zone-header">
             <div class="zone-title-wrap">
-              <h3 class="zone-title">🟣 Causes & Reasons</h3>
-              <p class="zone-desc">Nutritional deficiencies & medical factors</p>
+              <h3 class="zone-title">🟣 Causes & Reasons <span class="kn-sub">/ ಕಾರಣಗಳು</span></h3>
+              <p class="zone-desc">Nutritional deficiencies & medical factors / ರಕ್ತಹೀನತೆಗೆ ಕಾರಣಗಳು</p>
             </div>
             <span class="zone-counter" id="counter-reasons">0 / 5</span>
           </div>
@@ -163,8 +167,8 @@
         <section class="zone prevention" data-zone="prevention" id="zone-prevention">
           <div class="zone-header">
             <div class="zone-title-wrap">
-              <h3 class="zone-title">🟢 Prevention</h3>
-              <p class="zone-desc">Healthy diets, iron enhancers & medical care</p>
+              <h3 class="zone-title">🟢 Prevention <span class="kn-sub">/ ತಡೆಗಟ್ಟುವಿಕೆ</span></h3>
+              <p class="zone-desc">Healthy diets, iron enhancers & care / ತಡೆಗಟ್ಟುವ ಆಹಾರ ಮತ್ತು ಕ್ರಮಗಳು</p>
             </div>
             <span class="zone-counter" id="counter-prevention">0 / 3</span>
           </div>
@@ -189,17 +193,17 @@
         <div class="dock-buttons-row">
           <button type="button" class="dock-cat-btn symptoms" data-zone="symptoms" id="dockBtn-symptoms">
             <span class="btn-icon">🔴</span>
-            <span class="btn-name">Symptoms</span>
+            <span class="btn-name">Symptoms <small class="btn-kn">ಲಕ್ಷಣಗಳು</small></span>
             <span class="btn-count" id="mCount-symptoms">0/7</span>
           </button>
           <button type="button" class="dock-cat-btn reasons" data-zone="reasons" id="dockBtn-reasons">
             <span class="btn-icon">🟣</span>
-            <span class="btn-name">Causes</span>
+            <span class="btn-name">Causes <small class="btn-kn">ಕಾರಣಗಳು</small></span>
             <span class="btn-count" id="mCount-reasons">0/5</span>
           </button>
           <button type="button" class="dock-cat-btn prevention" data-zone="prevention" id="dockBtn-prevention">
             <span class="btn-icon">🟢</span>
-            <span class="btn-name">Prevention</span>
+            <span class="btn-name">Prevention <small class="btn-kn">ತಡೆಗಟ್ಟುವಿಕೆ</small></span>
             <span class="btn-count" id="mCount-prevention">0/3</span>
           </button>
         </div>
@@ -267,114 +271,144 @@
       {
         id: "shortness_breath",
         text: "Shortness of breath",
+        kn: "ಉಸಿರಾಟದ ತೊಂದರೆ",
         icon: "😮‍💨",
         category: "symptoms",
-        fact: "Tissues and vital organs receive inadequate oxygen due to low hemoglobin, causing rapid respiratory compensation."
+        fact: "Tissues and vital organs receive inadequate oxygen due to low hemoglobin, causing rapid respiratory compensation.",
+        factKn: "ಕಡಿಮೆ ಹಿಮೋಗ್ಲೋಬಿನ್ ಕಾರಣ ಅಂಗಾಂಶಗಳಿಗೆ ಆಮ್ಲಜನಕದ ಕೊರತೆಯಾಗಿ ಉಸಿರಾಟ ವೇಗವಾಗುತ್ತದೆ."
       },
       {
         id: "fast_heartbeat",
         text: "Fast heartbeat",
+        kn: "ಹೃದಯ ಬಡಿತ ವೇಗವಾಗುವುದು",
         icon: "💗",
         category: "symptoms",
-        fact: "The heart accelerates (tachycardia) to pump larger volumes of blood to compensate for deficient oxygen delivery."
+        fact: "The heart accelerates (tachycardia) to pump larger volumes of blood to compensate for deficient oxygen delivery.",
+        factKn: "ಆಮ್ಲಜನಕದ ಕೊರತೆಯನ್ನು ನೀಗಿಸಲು ಹೃದಯವು ರಕ್ತವನ್ನು ವೇಗವಾಗಿ ಪಂಪ್ ಮಾಡುತ್ತದೆ."
       },
       {
         id: "feeling_weak",
         text: "Feeling weak",
+        kn: "ದೌರ್ಬಲ್ಯ ಅನುಭವಿಸುವುದು",
         icon: "🪫",
         category: "symptoms",
-        fact: "Skeletal muscles are deprived of cellular oxygen, impairing mitochondrial ATP energy production."
+        fact: "Skeletal muscles are deprived of cellular oxygen, impairing mitochondrial ATP energy production.",
+        factKn: "ಸ್ನಾಯುಗಳಿಗೆ ಆಮ್ಲಜನಕದ ಕೊರತೆಯಾಗಿ ಶಕ್ತಿ ಉತ್ಪಾದನೆ ಕುಂಠಿತಗೊಂಡು ಸುಸ್ತು ಉಂಟಾಗುತ್ತದೆ."
       },
       {
         id: "difficulty_concentrating",
         text: "Difficulty concentrating",
+        kn: "ಗಮನ ಕೇಂದ್ರೀಕರಿಸಲು ಕಷ್ಟವಾಗುವುದು",
         icon: "🧠",
         category: "symptoms",
-        fact: "Reduced cerebral oxygen perfusion manifests as brain fog, poor memory retention, and low attention span."
+        fact: "Reduced cerebral oxygen perfusion manifests as brain fog, poor memory retention, and low attention span.",
+        factKn: "ಮೆದುಳಿಗೆ ಆಮ್ಲಜನಕ ಪೂರೈಕೆ ಕಡಿಮೆಯಾಗಿ ಏಕಾಗ್ರತೆ ಮತ್ತು ನೆನಪಿನ ಶಕ್ತಿ ಕುಂಠಿತವಾಗುತ್ತದೆ."
       },
       {
         id: "tired_small_activity",
         text: "Tired after small activity",
+        kn: "ಸ್ವಲ್ಪ ಕೆಲಸ ಮಾಡಿದರೂ ದಣಿವಾಗುವುದು",
         icon: "🏃",
         category: "symptoms",
-        fact: "Extreme exhaustion sets in even after trivial physical tasks because stamina reserve is severely depleted."
+        fact: "Extreme exhaustion sets in even after trivial physical tasks because stamina reserve is severely depleted.",
+        factKn: "ದೇಹದಲ್ಲಿ ಶಕ್ತಿಯ ಕೊರತೆಯಿಂದ ಸಣ್ಣ ಕೆಲಸಗಳನ್ನು ಮಾಡಿದರೂ ಅತಿಯಾದ ಆಯಾಸವಾಗುತ್ತದೆ."
       },
       {
         id: "brittle_nails",
         text: "Brittle nails",
+        kn: "ಉಗುರುಗಳು ಸುಲಭವಾಗಿ ಮುರಿಯುವುದು",
         icon: "💅",
         category: "symptoms",
-        fact: "Iron deficiency causes impaired keratin synthesis, leading to thin, brittle, or spoon-shaped nails (koilonychia)."
+        fact: "Iron deficiency causes impaired keratin synthesis, leading to thin, brittle, or spoon-shaped nails (koilonychia).",
+        factKn: "ಕಬ್ಬಿಣಾಂಶದ ಕೊರತೆಯಿಂದ ಉಗುರುಗಳು ತೆಳುವಾಗಿ, ಸುಲಭವಾಗಿ ಮುರಿಯುತ್ತವೆ (ಕೊಯಿಲೋನಿಕಿಯಾ)."
       },
       {
         id: "pica_cravings",
         text: "Pica / craving non-food items",
+        kn: "ಆಹಾರವಲ್ಲದ ವಸ್ತುಗಳನ್ನು ತಿನ್ನಬೇಕೆಂಬ ಬಯಕೆ (ಪಿಕಾ)",
         icon: "🧊",
         category: "symptoms",
-        fact: "Severe iron deficiency often triggers compulsive cravings for ice (pagophagia), chalk, starch, or soil."
+        fact: "Severe iron deficiency often triggers compulsive cravings for ice (pagophagia), chalk, starch, or soil.",
+        factKn: "ತೀವ್ರ ರಕ್ತಹೀನತೆಯು ಮಂಜುಗಡ್ಡೆ, ಮಣ್ಣು, ಸೀಮೆಸುಣ್ಣ ತಿನ್ನುವ ತೀವ್ರ ಹಂಬಲವನ್ನು ಉಂಟುಮಾಡುತ್ತದೆ."
       },
       {
         id: "heavy_bleeding",
         text: "Heavy menstrual bleeding",
+        kn: "ಅತಿಯಾದ ಮುಟ್ಟಿನ ರಕ್ತಸ್ರಾವ",
         icon: "🩸",
         category: "reasons",
-        fact: "Menorrhagia produces recurrent blood loss exceeding iron replenishment, making it a leading cause of anemia in women."
+        fact: "Menorrhagia produces recurrent blood loss exceeding iron replenishment, making it a leading cause of anemia in women.",
+        factKn: "ಹೆಚ್ಚಿನ ರಕ್ತಸ್ರಾವದಿಂದ ದೇಹದಲ್ಲಿನ ಕಬ್ಬಿಣದ ಅಂಶ ಕಡಿಮೆಯಾಗಿ ರಕ್ತಹೀನತೆಗೆ ಕಾರಣವಾಗುತ್ತದೆ."
       },
       {
         id: "low_iron_intake",
         text: "Low iron intake",
+        kn: "ಆಹಾರದಲ್ಲಿ ಕಬ್ಬಿಣಾಂಶ ಕಡಿಮೆ ಇರುವುದು",
         icon: "🥗",
         category: "reasons",
-        fact: "Diets deficient in iron-dense food staples fail to meet the daily metabolic requirements of the bone marrow."
+        fact: "Diets deficient in iron-dense food staples fail to meet the daily metabolic requirements of the bone marrow.",
+        factKn: "ದೈನಂದಿನ ಆಹಾರದಲ್ಲಿ ಕಬ್ಬಿಣಾಂಶಯುಕ್ತ ಆಹಾರಗಳ ಕೊರತೆಯು ಕೆಂಪು ರಕ್ತಕಣಗಳ ಉತ್ಪಾದನೆ ಕುಂಠಿತಗೊಳಿಸುತ್ತದೆ."
       },
       {
         id: "b12_deficiency",
         text: "Vitamin B12 deficiency",
+        kn: "ವಿಟಮಿನ್ B12 ಕೊರತೆ",
         icon: "🧬",
         category: "reasons",
-        fact: "Vitamin B12 is essential for DNA synthesis during erythrocyte division; its absence causes megaloblastic anemia."
+        fact: "Vitamin B12 is essential for DNA synthesis during erythrocyte division; its absence causes megaloblastic anemia.",
+        factKn: "ವಿಟಮಿನ್ B12 ಕೊರತೆಯು ಆರೋಗ್ಯಕರ ಕೆಂಪು ರಕ್ತಕಣಗಳ ಬೆಳವಣಿಗೆಗೆ ಅಡ್ಡಿಯಾಗುತ್ತದೆ."
       },
       {
         id: "folate_deficiency",
         text: "Folate deficiency",
+        kn: "ಫೋಲೇಟ್ ಕೊರತೆ",
         icon: "🥦",
         category: "reasons",
-        fact: "Folate (Vitamin B9) is required for rapid red blood cell maturation. Deficiency results in abnormally enlarged cells."
+        fact: "Folate (Vitamin B9) is required for rapid red blood cell maturation. Deficiency results in abnormally enlarged cells.",
+        factKn: "ಫೋಲೇಟ್ (ವಿಟಮಿನ್ B9) ಕೊರತೆಯಿಂದ ರಕ್ತಕಣಗಳ ಪಕ್ವತೆ ಕಡಿಮೆಯಾಗುತ್ತದೆ."
       },
       {
         id: "long_term_illness",
         text: "Long-term illness",
+        kn: "ದೀರ್ಘಕಾಲದ ಅನಾರೋಗ್ಯ",
         icon: "🏥",
         category: "reasons",
-        fact: "Chronic inflammatory illnesses trigger hepcidin elevation, which locks iron within storage macrophages."
+        fact: "Chronic inflammatory illnesses trigger hepcidin elevation, which locks iron within storage macrophages.",
+        factKn: "ದೀರ್ಘಕಾಲದ ಕಾಯಿಲೆಗಳು ರಕ್ತಕಣಗಳ ನೈಸರ್ಗಿಕ ಉತ್ಪಾದನೆಯನ್ನು ಕುಂಠಿತಗೊಳಿಸುತ್ತವೆ."
       },
       {
         id: "eat_iron_rich",
         text: "Eat iron-rich foods",
+        kn: "ಕಬ್ಬಿಣಾಂಶ ಸಮೃದ್ಧ ಆಹಾರ ಸೇವಿಸಿ",
         icon: "🥬",
         category: "prevention",
-        fact: "Consuming dark leafy greens, legumes, dates, poultry, and fortified cereals replenishes ferritin storage levels."
+        fact: "Consuming dark leafy greens, legumes, dates, poultry, and fortified cereals replenishes ferritin storage levels.",
+        factKn: "ಹಸಿರು ಸೊಪ್ಪುಗಳು, ಕಾಳುಗಳು, ಖರ್ಜೂರ ಮತ್ತು ಬೆಲ್ಲ ಸೇವನೆಯು ರಕ್ತದಲ್ಲಿ ಕಬ್ಬಿಣವನ್ನು ಹೆಚ್ಚಿಸುತ್ತದೆ."
       },
       {
         id: "iron_advised",
         text: "Take iron only when advised",
+        kn: "ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರ ಸಲಹೆಯಂತೆ ಮಾತ್ರ ಕಬ್ಬಿಣದ ಮಾತ್ರೆಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ",
         icon: "💊",
         category: "prevention",
-        fact: "Iron supplementation requires accurate clinical dosing to prevent toxicity or gastrointestinal side effects."
+        fact: "Iron supplementation requires accurate clinical dosing to prevent toxicity or gastrointestinal side effects.",
+        factKn: "ವೈದ್ಯರು ಅಥವಾ ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರ ಸೂಕ್ತ ಸಲಹೆಯ ಮೇರೆಗೆ ಮಾತ್ರ ಮಾತ್ರೆಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಬೇಕು."
       },
       {
         id: "vit_c_iron",
         text: "Eat vitamin-C-rich foods with iron",
+        kn: "ಕಬ್ಬಿಣಾಂಶಯುಕ್ತ ಆಹಾರದ ಜೊತೆಗೆ ವಿಟಮಿನ್ C ಸಮೃದ್ಧ ಆಹಾರ ಸೇವಿಸಿ",
         icon: "🍊",
         category: "prevention",
-        fact: "Ascorbic acid (Vitamin C) reduces non-heme ferric iron (Fe3+) into soluble ferrous iron (Fe2+), boosting gut absorption by up to 3x."
+        fact: "Ascorbic acid (Vitamin C) reduces non-heme ferric iron (Fe3+) into soluble ferrous iron (Fe2+), boosting gut absorption by up to 3x.",
+        factKn: "ನೆಲ್ಲಿಕಾಯಿ, ಕಿತ್ತಳೆ, ನಿಂಬೆಯಂತಹ ವಿಟಮಿನ್ C ಆಹಾರಗಳು ಕಬ್ಬಿಣಾಂಶವನ್ನು ದೇಹವು ಹೀರಿಕೊಳ್ಳಲು ನೆರವಾಗುತ್ತವೆ."
       }
     ];
 
     const categoryMeta = {
-      symptoms: { name: "Symptoms", color: "#e11d48", total: 7 },
-      reasons: { name: "Causes & Reasons", color: "#7c3aed", total: 5 },
-      prevention: { name: "Prevention", color: "#059669", total: 3 }
+      symptoms: { name: "Symptoms", kn: "ಲಕ್ಷಣಗಳು", color: "#e11d48", total: 7 },
+      reasons: { name: "Causes & Reasons", kn: "ಕಾರಣಗಳು", color: "#7c3aed", total: 5 },
+      prevention: { name: "Prevention", kn: "ತಡೆಗಟ್ಟುವಿಕೆ", color: "#059669", total: 3 }
     };
 
     /* =========================================================================
@@ -761,12 +795,16 @@
         spotlight.style.opacity = "1";
         $("spotlightIcon").textContent = cardElement.dataset.icon;
         $("spotlightTitle").textContent = cardElement.dataset.text;
+        const knEl = $("spotlightKn");
+        if (knEl) knEl.textContent = cardElement.dataset.kn || "";
         $("spotlightHint").textContent = "Tap category below 👇 or swipe";
         if (dockPrompt) dockPrompt.textContent = `"${cardElement.dataset.text}"`;
       } else {
         spotlight.style.opacity = "0.5";
         $("spotlightTitle").textContent = "All cards sorted!";
-        $("spotlightHint").textContent = "Great job!";
+        const knEl = $("spotlightKn");
+        if (knEl) knEl.textContent = "ಎಲ್ಲಾ ಕಾರ್ಡ್‌ಗಳನ್ನು ಜೋಡಿಸಲಾಗಿದೆ!";
+        $("spotlightHint").textContent = "Great job! / ಅತ್ಯುತ್ತಮ!";
         if (dockPrompt) dockPrompt.textContent = "Done!";
       }
     }
@@ -835,12 +873,15 @@
         card.dataset.id = item.id;
         card.dataset.category = item.category;
         card.dataset.text = item.text;
+        card.dataset.kn = item.kn;
         card.dataset.icon = item.icon;
         card.dataset.fact = item.fact;
+        card.dataset.factKn = item.factKn;
 
         card.innerHTML = `
           <span class="card-icon">${item.icon}</span>
           <span class="card-label">${item.text}</span>
+          <span class="card-kn">${item.kn}</span>
         `;
 
         // Desktop Drag events
@@ -915,8 +956,8 @@
           $("livesVal").textContent = "❤️".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, 3 - lives));
         }
 
-        const actualName = categoryMeta[cardCategory].name;
-        $("gameMsg").innerHTML = `❌ <b>Not quite!</b> "${cardElement.dataset.text}" is actually a <b>${actualName}</b>.`;
+        const actualMeta = categoryMeta[cardCategory];
+        $("gameMsg").innerHTML = `❌ <b>Not quite! / ತಪ್ಪಾಗಿದೆ!</b> "${cardElement.dataset.text} (${cardElement.dataset.kn})" is a <b>${actualMeta.name} / ${actualMeta.kn}</b>.`;
         $("gameMsg").className = "game-message error";
 
         // Shake card & spotlight
@@ -977,11 +1018,11 @@
       // Create mini placed chip
       const mini = document.createElement("span");
       mini.className = "mini-badge";
-      mini.innerHTML = `<span>${cardElement.dataset.icon}</span> <span>${cardElement.dataset.text}</span>`;
+      mini.innerHTML = `<span>${cardElement.dataset.icon}</span> <span>${cardElement.dataset.text}</span> <span class="mini-kn">(${cardElement.dataset.kn})</span>`;
       mini.title = "Click to read clinical fact";
       mini.addEventListener("click", e => {
         e.stopPropagation();
-        openFactModal(cardElement.dataset.text, cardElement.dataset.icon, cardCategory, cardElement.dataset.fact);
+        openFactModal(cardElement.dataset.text, cardElement.dataset.icon, cardCategory, cardElement.dataset.fact, cardElement.dataset.kn, cardElement.dataset.factKn);
       });
 
       targetZoneElement.querySelector(".placed-tray").appendChild(mini);
@@ -998,7 +1039,7 @@
 
       $("remainingVal").textContent = `${remainingCards} cards left`;
       $("cardBadge").textContent = `${remainingCards} remaining`;
-      $("gameMsg").innerHTML = `✅ <b>Correct!</b> "${mini.innerText}" sorted properly.`;
+      $("gameMsg").innerHTML = `✅ <b>Correct! / ಸರಿ!</b> "${cardElement.dataset.text} (${cardElement.dataset.kn})" sorted properly.`;
       $("gameMsg").className = "game-message correct";
 
       // If zone completed, burst mini confetti
@@ -1149,13 +1190,14 @@
     });
 
     // Factoid Modal
-    function openFactModal(title, icon, category, fact) {
+    function openFactModal(title, icon, category, fact, kn = "", factKn = "") {
       sound.playSelect();
       $("modalIcon").textContent = icon;
-      $("modalTitle").textContent = title;
-      $("modalCategoryTag").textContent = categoryMeta[category].name;
+      $("modalTitle").innerHTML = `${title}<br><span style="font-size:16px; color:#1e40af; font-family:'Noto Sans Kannada', sans-serif;">${kn}</span>`;
+      const catMeta = categoryMeta[category];
+      $("modalCategoryTag").textContent = `${catMeta.name} / ${catMeta.kn}`;
       $("modalCategoryTag").className = `fact-category-tag review-pill ${category}`;
-      $("modalBody").textContent = fact;
+      $("modalBody").innerHTML = `${fact}<br><br><span style="color:#1e40af; font-family:'Noto Sans Kannada', sans-serif; font-size:14px; display:block; line-height:1.45;">${factKn}</span>`;
       $("factModal").classList.add("active");
     }
 
@@ -1187,12 +1229,12 @@
         sound.playFanfare();
         fireConfetti(120);
         $("resultEmoji").textContent = "🏆";
-        $("resultHeading").textContent = "Sensational Victory!";
+        $("resultHeading").textContent = "Sensational Victory! / ಅದ್ಭುತ ವಿಜಯ!";
         $("resultStars").textContent = accuracy >= 90 ? "⭐⭐⭐" : (accuracy >= 70 ? "⭐⭐" : "⭐");
       } else {
         sound.playError();
         $("resultEmoji").textContent = "💪";
-        $("resultHeading").textContent = reasonMsg || "Good Effort!";
+        $("resultHeading").textContent = reasonMsg ? `${reasonMsg} / ಪ್ರಯತ್ನ ಮುಂದುವರಿಸಿ!` : "Good Effort! / ಉತ್ತಮ ಪ್ರಯತ್ನ!";
         $("resultStars").textContent = "⭐";
       }
 
@@ -1207,7 +1249,7 @@
       if (score > bestScore) {
         localStorage.setItem("anemia_hero_high_score", score);
         $("bestScoreVal").textContent = score;
-        $("highScoreTag").textContent = "🎉 NEW PERSONAL BEST!";
+        $("highScoreTag").textContent = "🎉 NEW PERSONAL BEST / ಹೊಸ ದಾಖಲೆ!";
       } else {
         $("bestScoreVal").textContent = bestScore;
         $("highScoreTag").textContent = `🏆 Personal Best: ${bestScore}`;
@@ -1220,10 +1262,37 @@
         const row = document.createElement("div");
         row.className = "review-item";
         row.innerHTML = `
-          <span class="review-pill ${item.category}">${categoryMeta[item.category].name}</span>
-          <span class="review-text"><b>${item.icon} ${item.text}:</b> ${item.fact}</span>
+          <span class="review-pill ${item.category}">${categoryMeta[item.category].name} / ${categoryMeta[item.category].kn}</span>
+          <span class="review-text">
+            <b>${item.icon} ${item.text}</b> <span class="card-kn" style="display:inline; margin-left:4px;">(${item.kn})</span>: ${item.fact}
+            <span class="review-fact-kn">${item.factKn}</span>
+          </span>
         `;
         reviewList.appendChild(row);
+      });
+    }
+
+    // Language Toggle Listener
+    let currentLangMode = "bilingual";
+    const langBtn = $("langToggle");
+    if (langBtn) {
+      langBtn.addEventListener("click", () => {
+        if (currentLangMode === "bilingual") {
+          currentLangMode = "kn";
+          langBtn.textContent = "🇮🇳 ಕನ್ನಡ (Kannada)";
+          document.body.classList.add("lang-kn-only");
+          document.body.classList.remove("lang-en-only");
+        } else if (currentLangMode === "kn") {
+          currentLangMode = "en";
+          langBtn.textContent = "🇬🇧 English";
+          document.body.classList.add("lang-en-only");
+          document.body.classList.remove("lang-kn-only");
+        } else {
+          currentLangMode = "bilingual";
+          langBtn.textContent = "🌐 EN + ಕನ್ನಡ";
+          document.body.classList.remove("lang-kn-only", "lang-en-only");
+        }
+        sound.playSelect();
       });
     }
 
