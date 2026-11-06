@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anemia Snake & Ladder | ರಕ್ತಹೀನತೆ ಹಾವು-ಏಣಿ ಆಟ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="snake-ladder.css">
+</head>
+<body>
+  <!-- Ambient floating red blood cells background -->
+  <canvas id="ambientCanvas"></canvas>
+  <!-- Confetti canvas for victory celebration -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="wrap">
+    <!-- Top Navigation & Brand Header -->
+    <header class="brand-nav">
+      <div class="brand-left">
+        <span class="brand-icon">🩸</span>
+        <div class="brand-titles">
+          <h1>Anemia Snake & Ladder</h1>
+          <span class="kn-title">ರಕ್ತಹೀನತೆ ಹಾವು-ಏಣಿ ಆಟ</span>
+        </div>
+      </div>
+      <div class="brand-actions">
+        <a href="index.html" class="hub-btn" title="Back to Game Portal">🏠 <span>Game Hub</span></a>
+        <button id="soundToggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+      </div>
+    </header>
+
+    <!-- Page Intro Header -->
+    <div class="game-intro">
+      <div class="badge-pill">✨ Interactive Board Game / ಸಂವಾದಾತ್ಮಕ ಆಟ</div>
+      <h2>Climb with Healthy Habits, <span>Defeat Anemia!</span></h2>
+      <p>
+        Roll the dice, climb ladders of iron nutrition, avoid snakes of dietary risks, and answer clinical quiz questions on special squares!<br>
+        <span class="intro-kn">ಆರೋಗ್ಯಕರ ಆಹಾರದ ಅಭ್ಯಾಸಗಳಿಂದ ಏಣಿ ಏರಿ, ರಕ್ತಹೀನತೆ ತಡೆಯಿರಿ; ಅಪಾಯದ ಚೌಕಗಳಲ್ಲಿ ಹಾವುಗಳಿಂದ ಎಚ್ಚರವಿರಿ ಮತ್ತು ರಸಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ!</span>
+      </p>
+    </div>
+
+    <!-- Main Two-Column Layout -->
+    <div class="layout">
+      <!-- Left Column: The 100-Square Board -->
+      <section class="board-wrap">
+        <div class="board-stage">
+          <div id="board" class="board" aria-label="Snake and ladder board"></div>
+          <svg id="art" class="art" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div id="tokenLayer" class="token-layer"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <span><i class="badge up">↑</i> Ladder: climb to top / ಏಣಿ: ಮೇಲಕ್ಕೆ ಏರಿ</span>
+          <span><i class="badge down">↓</i> Snake: slide down / ಹಾವು: ಕೆಳಗೆ ಜಾರಿ</span>
+          <span><i class="badge quiz">?</i> Health Quiz / ಪ್ರಶ್ನೆ</span>
+          <span>🚩 Start (1)</span>
+          <span>🏆 Finish (100)</span>
+        </div>
+
+        <!-- Interactive Key -->
+        <div class="key">
+          <div class="key-row">
+            <span class="key-title">🪜 Ladders / ಏಣಿಗಳು</span>
+            <span id="ladderKey" class="key-row"></span>
+          </div>
+          <div class="key-row">
+            <span class="key-title">🐍 Snakes / ಹಾವುಗಳು</span>
+            <span id="snakeKey" class="key-row"></span>
+          </div>
+          <div class="key-hint">💡 Tap or hover any pair above to highlight its path on the board!</div>
+        </div>
+      </section>
+
+      <!-- Right Column: Controls Panel -->
+      <aside class="panel">
+        <h2 class="side-title">
+          <span>Game Controls</span>
+          <span class="kn-side">/ ಆಟದ ನಿಯಂತ್ರಣ</span>
+        </h2>
+
+        <div class="control-group">
+          <label for="players" class="control-label">Select Mode / ಆಟಗಾರರ ಸಂಖ್ಯೆ:</label>
+          <select id="players" class="custom-select">
+            <option value="2">👥 2 Players / 2 ಆಟಗಾರರು</option>
+            <option value="1">👤 1 Player (Solo Practice) / 1 ಆಟಗಾರ</option>
+          </select>
+        </div>
+
+        <!-- Player 1 Card -->
+        <div id="p1" class="player active">
+          <div class="pname">
+            <span class="pname-left"><span class="dot p1"></span> Player 1 / ಆಟಗಾರ 1</span>
+            <span class="turn-pill">Turn</span>
+          </div>
+          <div class="pos" id="pos1">Square 1 / ಚೌಕ 1</div>
+        </div>
+
+        <!-- Player 2 Card -->
+        <div id="p2" class="player">
+          <div class="pname">
+            <span class="pname-left"><span class="dot p2"></span> Player 2 / ಆಟಗಾರ 2</span>
+            <span class="turn-pill">Turn</span>
+          </div>
+          <div class="pos" id="pos2">Square 1 / ಚೌಕ 1</div>
+        </div>
+
+        <!-- 3D Styled Dice -->
+        <div class="dice-container">
+          <div class="dice-box" id="dice" title="Click or tap roll button below">🎲</div>
+        </div>
+
+        <button class="primary-btn" id="roll">
+          <span>🎲 Roll Dice / ದಾಳ ಉರುಳಿಸಿ</span>
+        </button>
+
+        <div id="status" class="status">
+          Player 1, roll the dice to begin!
+          <span class="kn-status">ಆಟಗಾರ 1, ಆಟ ಪ್ರಾರಂಭಿಸಲು ದಾಳ ಉರುಳಿಸಿ!</span>
+        </div>
+
+        <button class="secondary-btn" id="reset">
+          <span>↻ New Game / ಹೊಸ ಆಟ</span>
+        </button>
+
+        <div class="note-box">
+          <b>Educational Note:</b> Symptoms alone cannot confirm anaemia. A laboratory blood test (Hb) and guidance from health workers are vital.
+          <span class="kn-note">ಶಿಕ್ಷಣಾರ್ಥ ಸೂಚನೆ: ಕೇವಲ ಲಕ್ಷಣಗಳಿಂದ ರಕ್ತಹೀನತೆ ದೃಢಪಡಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ರಕ್ತ ಪರೀಕ್ಷೆ ಹಾಗೂ ವೈದ್ಯಕೀಯ ಸಲಹೆ ಅತ್ಯಗತ್ಯ.</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Interactive Quiz Modal -->
+  <div id="quizModal" class="modal" role="dialog" aria-modal="true">
+    <div class="dialog">
+      <div class="dialog-header">
+        <div class="dialog-icon">🧠</div>
+        <div>
+          <h2>Clinical Anaemia Quiz</h2>
+          <span class="kn-subhead">ರಕ್ತಹೀನತೆ ಜಾಗೃತಿ ರಸಪ್ರಶ್ನೆ</span>
+        </div>
+      </div>
+      <div id="qtext" class="question"></div>
+      <div id="answers" class="answers"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="continue" class="primary-btn" disabled>
+        <span>Continue Game / ಮುಂದುವರಿಸಿ ➔</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Victory Celebration Modal -->
+  <div id="winModal" class="modal" role="dialog" aria-modal="true">
+    <div class="dialog win-dialog">
+      <div class="win-trophy">🏆</div>
+      <h2 class="win-title" id="winTitle">Spectacular Victory!</h2>
+      <p class="win-subtitle" id="winSubtitle">You reached Square 100 and mastered anemia health literacy!</p>
+      <div class="win-actions">
+        <button class="primary-btn" id="winPlayAgain" style="width: auto;">
+          <span>🔄 Play Again</span>
+        </button>
+        <a href="index.html" class="secondary-btn" style="width: auto; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+          <span>🏠 Games Portal</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ============================================================
+     AUDIO SYNTHESIZER (Pure Web Audio API — No External Files)
+     ============================================================ */
+  let audioCtx = null;
+  let soundEnabled = true;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        audioCtx = new AudioContext();
+      }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  const soundToggleBtn = document.getElementById("soundToggle");
+  soundToggleBtn.addEventListener("click", () => {
+    initAudio();
+    soundEnabled = !soundEnabled;
+    soundToggleBtn.textContent = soundEnabled ? "🔊" : "🔇";
+    soundToggleBtn.title = soundEnabled ? "Sound: On" : "Sound: Muted";
+  });
+
+  function playTone(freq, type, duration, gainVal = 0.15) {
+    if (!soundEnabled || !audioCtx) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function playDiceRoll() {
+    if (!soundEnabled || !audioCtx) return;
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => {
+        playTone(300 + Math.random() * 250, 'triangle', 0.04, 0.12);
+      }, i * 65);
+    }
+  }
+
+  function playHop() {
+    if (!soundEnabled || !audioCtx) return;
+    playTone(480, 'sine', 0.08, 0.15);
+  }
+
+  function playLadder() {
+    if (!soundEnabled || !audioCtx) return;
+    const notes = [261.6, 329.6, 392.0, 523.25, 659.25];
+    notes.forEach((f, idx) => {
+      setTimeout(() => playTone(f, 'triangle', 0.22, 0.18), idx * 100);
+    });
+  }
+
+  function playSnake() {
+    if (!soundEnabled || !audioCtx) return;
+    const notes = [440, 370, 311, 246, 185];
+    notes.forEach((f, idx) => {
+      setTimeout(() => playTone(f, 'sawtooth', 0.16, 0.08), idx * 90);
+    });
+  }
+
+  function playQuiz() {
+    if (!soundEnabled || !audioCtx) return;
+    playTone(587.3, 'sine', 0.15, 0.2);
+    setTimeout(() => playTone(880, 'sine', 0.35, 0.22), 120);
+  }
+
+  function playCorrect() {
+    if (!soundEnabled || !audioCtx) return;
+    playTone(523.25, 'triangle', 0.18, 0.2);
+    setTimeout(() => playTone(659.25, 'triangle', 0.18, 0.2), 100);
+    setTimeout(() => playTone(783.99, 'triangle', 0.35, 0.25), 200);
+  }
+
+  function playWrong() {
+    if (!soundEnabled || !audioCtx) return;
+    playTone(220, 'sawtooth', 0.25, 0.12);
+  }
+
+  function playWin() {
+    if (!soundEnabled || !audioCtx) return;
+    const notes = [261.6, 329.6, 392.0, 523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((f, idx) => {
+      setTimeout(() => playTone(f, 'triangle', 0.3, 0.25), idx * 110);
+    });
+  }
+
+  /* ============================================================
+     AMBIENT PARTICLES (Floating Red Blood Cells Background)
+     ============================================================ */
+  const canvas = document.getElementById("ambientCanvas");
+  const ctx = canvas.getContext("2d");
+  let width, height;
+  let particles = [];
+
+  function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  for (let i = 0; i < 24; i++) {
+    particles.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 12 + 8,
+      speedX: (Math.random() - 0.5) * 0.4,
+      speedY: -Math.random() * 0.5 - 0.2,
+      opacity: Math.random() * 0.25 + 0.1,
+      wobble: Math.random() * Math.PI * 2
+    });
+  }
+
+  function drawAmbient() {
+    ctx.clearRect(0, 0, width, height);
+    particles.forEach(p => {
+      p.y += p.speedY;
+      p.x += p.speedX;
+      p.wobble += 0.02;
+      const wobbleX = Math.sin(p.wobble) * 4;
+
+      if (p.y < -30) {
+        p.y = height + 30;
+        p.x = Math.random() * width;
+      }
+      if (p.x < -30) p.x = width + 30;
+      if (p.x > width + 30) p.x = -30;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(p.x + wobbleX, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(225, 29, 72, ${p.opacity})`;
+      ctx.fill();
+
+      // Inner RBC biconcave dimple
+      ctx.beginPath();
+      ctx.arc(p.x + wobbleX, p.y, p.radius * 0.48, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * 0.75})`;
+      ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(drawAmbient);
+  }
+  drawAmbient();
+
+  /* ============================================================
+     CONFETTI PARTICLE ENGINE (For Victory Celebration)
+     ============================================================ */
+  const confettiCanvas = document.getElementById("confettiCanvas");
+  const cCtx = confettiCanvas.getContext("2d");
+  let confettiParticles = [];
+  let confettiActive = false;
+
+  function resizeConfetti() {
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeConfetti);
+  resizeConfetti();
+
+  function triggerConfetti() {
+    confettiParticles = [];
+    confettiActive = true;
+    const colors = ["#e11d48", "#2563eb", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
+    for (let i = 0; i < 140; i++) {
+      confettiParticles.push({
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        vx: (Math.random() - 0.5) * 22,
+        vy: (Math.random() - 0.7) * 24,
+        size: Math.random() * 8 + 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 12,
+        gravity: 0.45,
+        opacity: 1
+      });
+    }
+    renderConfetti();
+  }
+
+  function renderConfetti() {
+    if (!confettiActive) return;
+    cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    let alive = false;
+    confettiParticles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.rotation += p.rotationSpeed;
+      p.opacity -= 0.007;
+
+      if (p.opacity > 0 && p.y < confettiCanvas.height + 50) {
+        alive = true;
+        cCtx.save();
+        cCtx.translate(p.x, p.y);
+        cCtx.rotate((p.rotation * Math.PI) / 180);
+        cCtx.fillStyle = p.color;
+        cCtx.globalAlpha = Math.max(0, p.opacity);
+        cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+        cCtx.restore();
+      }
+    });
+
+    if (alive) {
+      requestAnimationFrame(renderConfetti);
+    } else {
+      confettiActive = false;
+      cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+  }
+
+  /* ============================================================
+     BOARD DATA & CLINICAL QUIZ
+     ============================================================ */
+  const ladders = { 3: 24, 8: 30, 20: 40, 28: 55, 51: 71, 77: 97 };
+  const snakes = { 26: 6, 62: 42, 65: 44, 88: 68, 95: 75, 99: 80 };
+
+  const special = {
+    5: { icon: "🥬", label: "Iron foods", kn: "ಕಬ್ಬಿಣಾಂಶ ಆಹಾರ" },
+    10: { icon: "❤️", label: "Haemoglobin", kn: "ಹಿಮೋಗ್ಲೋಬಿನ್" },
+    14: { icon: "🍊", label: "Vitamin C", kn: "ವಿಟಮಿನ್ C" },
+    19: { icon: "🩴", label: "Wear footwear", kn: "ಚಪ್ಪಲಿ ಧರಿಸಿ" },
+    22: { icon: "🩸", label: "Blood test", kn: "ರಕ್ತ ಪರೀಕ್ಷೆ" },
+    27: { icon: "🧼", label: "Wash hands", kn: "ಕೈ ತೊಳೆಯಿರಿ" },
+    32: { icon: "☕", label: "No tea at meals", kn: "ಊಟಕ್ಕೆ ಚಹಾ ಬೇಡ" },
+    36: { icon: "💊", label: "IFA advice", kn: "IFA ಸಲಹೆ" },
+    41: { icon: "🪱", label: "Deworming", kn: "ಜಂತು ನಿವಾರಣೆ" },
+    49: { icon: "🫘", label: "Pulses", kn: "ಬೇಳೆಕಾಳುಗಳು" },
+    53: { icon: "🤰", label: "Pregnancy care", kn: "ಗರ್ಭಿಣಿ ಆರೈಕೆ" },
+    58: { icon: "🌿", label: "Drumstick leaves", kn: "ನುಗ್ಗೆ ಸೊಪ್ಪು" },
+    63: { icon: "🧑‍⚕️", label: "Health advice", kn: "ಆರೋಗ್ಯ ಸಲಹೆ" },
+    67: { icon: "🍳", label: "Iron kadai", kn: "ಕಬ್ಬಿಣದ ಬಾಣಲೆ" },
+    72: { icon: "🦟", label: "Mosquito net", kn: "ಸೊಳ್ಳೆ ಪರದೆ" },
+    78: { icon: "🥗", label: "Balanced diet", kn: "ಸಮತೋಲಿತ ಆಹಾರ" },
+    83: { icon: "🌱", label: "Sprouts", kn: "ಮೊಳಕೆ ಕಾಳು" },
+    90: { icon: "📅", label: "Check-up", kn: "ಆರೋಗ್ಯ ತಪಾಸಣೆ" },
+    92: { icon: "🎒", label: "Child health", kn: "ಮಕ್ಕಳ ಆರೋಗ್ಯ" },
+    96: { icon: "👀", label: "Know the signs", kn: "ಲಕ್ಷಣ ತಿಳಿಯಿರಿ" }
+  };
+
+  const quiz = [
+    {
+      q: "Which test helps confirm anaemia?<br><span class='kn'>ರಕ್ತಹೀನತೆಯನ್ನು ಖಚಿತಪಡಿಸಲು ಯಾವ ಪರೀಕ್ಷೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ?</span>",
+      a: ["Blood test / ರಕ್ತ ಪರೀಕ್ಷೆ", "Eye test / ಕಣ್ಣಿನ ಪರೀಕ್ಷೆ", "Hearing test / ಶ್ರವಣ ಪರೀಕ್ಷೆ"],
+      c: 0,
+      why: "A blood test measures haemoglobin. / ರಕ್ತ ಪರೀಕ್ಷೆಯಿಂದ ಹಿಮೋಗ್ಲೋಬಿನ್ ಮಟ್ಟವನ್ನು ಅಳೆಯಬಹುದು."
+    },
+    {
+      q: "Which food group can provide iron?<br><span class='kn'>ಯಾವ ಆಹಾರ ಗುಂಪಿನಿಂದ ಕಬ್ಬಿಣಾಂಶ ದೊರೆಯುತ್ತದೆ?</span>",
+      a: ["Pulses and leafy greens / ಬೇಳೆಕಾಳುಗಳು ಮತ್ತು ಸೊಪ್ಪುಗಳು", "Sugary drinks / ಸಕ್ಕರೆ ಪಾನೀಯಗಳು", "Candy only / ಸಿಹಿತಿಂಡಿಗಳು ಮಾತ್ರ"],
+      c: 0,
+      why: "Pulses and leafy greens can contribute iron. / ಬೇಳೆಕಾಳುಗಳು ಮತ್ತು ಸೊಪ್ಪುಗಳು ಕಬ್ಬಿಣಾಂಶ ಒದಗಿಸಬಹುದು."
+    },
+    {
+      q: "Vitamin C with an iron-rich meal can…<br><span class='kn'>ಕಬ್ಬಿಣಾಂಶಯುಕ್ತ ಆಹಾರದೊಂದಿಗೆ ವಿಟಮಿನ್ C ಸೇವಿಸಿದರೆ…</span>",
+      a: ["Help iron absorption / ಕಬ್ಬಿಣಾಂಶ ಹೀರಿಕೊಳ್ಳಲು ಸಹಾಯವಾಗುತ್ತದೆ", "Stop all illness / ಎಲ್ಲಾ ಕಾಯಿಲೆಗಳನ್ನು ತಡೆಯುತ್ತದೆ", "Replace a blood test / ರಕ್ತ ಪರೀಕ್ಷೆಗೆ ಬದಲಿಯಾಗುತ್ತದೆ"],
+      c: 0,
+      why: "Vitamin C helps the body absorb non-haem iron from plant foods. / ಸಸ್ಯಾಹಾರದಲ್ಲಿರುವ ಕಬ್ಬಿಣಾಂಶ ಹೀರಿಕೊಳ್ಳಲು ವಿಟಮಿನ್ C ಸಹಾಯ ಮಾಡುತ್ತದೆ."
+    },
+    {
+      q: "Should iron tablets be taken without advice?<br><span class='kn'>ಸಲಹೆಯಿಲ್ಲದೆ ಕಬ್ಬಿಣದ ಮಾತ್ರೆಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಬಹುದೇ?</span>",
+      a: ["No, follow health-worker advice / ಬೇಡ, ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರ ಸಲಹೆ ಪಾಲಿಸಿ", "Yes, take any amount / ಹೌದು, ಎಷ್ಟು ಬೇಕಾದರೂ ತೆಗೆದುಕೊಳ್ಳಿ", "Only when tired / ದಣಿವಾದಾಗ ಮಾತ್ರ"],
+      c: 0,
+      why: "Take supplements according to health-worker or clinician advice. / ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರು ಅಥವಾ ವೈದ್ಯರ ಸಲಹೆಯಂತೆ ಮಾತ್ರ ಪೂರಕ ಮಾತ್ರೆಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಿ."
+    },
+    {
+      q: "Can tiredness alone prove a person has anaemia?<br><span class='kn'>ದಣಿವು ಮಾತ್ರದಿಂದ ರಕ್ತಹೀನತೆ ಇದೆ ಎಂದು ಖಚಿತಪಡಿಸಬಹುದೇ?</span>",
+      a: ["No, testing is needed / ಇಲ್ಲ, ಪರೀಕ್ಷೆ ಅಗತ್ಯ", "Yes, always / ಹೌದು, ಯಾವಾಗಲೂ", "No test is useful / ಪರೀಕ್ಷೆ ಉಪಯೋಗವಿಲ್ಲ"],
+      c: 0,
+      why: "Many conditions can cause tiredness; a blood test is needed. / ದಣಿವಿಗೆ ಹಲವು ಕಾರಣಗಳಿರಬಹುದು; ರಕ್ತ ಪರೀಕ್ಷೆ ಅಗತ್ಯ."
+    },
+    {
+      q: "Which may increase the risk of iron deficiency?<br><span class='kn'>ಯಾವುದು ಕಬ್ಬಿಣದ ಕೊರತೆಯ ಅಪಾಯವನ್ನು ಹೆಚ್ಚಿಸಬಹುದು?</span>",
+      a: ["Heavy blood loss / ಅಧಿಕ ರಕ್ತಸ್ರಾವ", "Drinking clean water / ಸ್ವಚ್ಛ ನೀರು ಕುಡಿಯುವುದು", "Washing hands / ಕೈ ತೊಳೆಯುವುದು"],
+      c: 0,
+      why: "Heavy menstrual or other blood loss can contribute to iron deficiency. / ಅಧಿಕ ಮುಟ್ಟಿನ ಅಥವಾ ಇತರೆ ರಕ್ತಸ್ರಾವವು ಕಬ್ಬಿಣದ ಕೊರತೆಗೆ ಕಾರಣವಾಗಬಹುದು."
+    },
+    {
+      q: "Which nutrient deficiency can also cause anaemia?<br><span class='kn'>ಯಾವ ಪೋಷಕಾಂಶದ ಕೊರತೆಯೂ ರಕ್ತಹೀನತೆಗೆ ಕಾರಣವಾಗಬಹುದು?</span>",
+      a: ["Vitamin B12 or folate / ವಿಟಮಿನ್ B12 ಅಥವಾ ಫೋಲೇಟ್", "Vitamin C only / ವಿಟಮಿನ್ C ಮಾತ್ರ", "Water / ನೀರು"],
+      c: 0,
+      why: "Vitamin B12 and folate deficiencies can cause certain types of anaemia. / ವಿಟಮಿನ್ B12 ಮತ್ತು ಫೋಲೇಟ್ ಕೊರತೆಯಿಂದ ಕೆಲವು ವಿಧದ ರಕ್ತಹೀನತೆ ಉಂಟಾಗಬಹುದು."
+    },
+    {
+      q: "What should you do if you think you may have anaemia?<br><span class='kn'>ರಕ್ತಹೀನತೆ ಇರಬಹುದು ಎಂದು ಅನಿಸಿದರೆ ಏನು ಮಾಡಬೇಕು?</span>",
+      a: ["Visit a health facility for assessment / ಆರೋಗ್ಯ ತಪಾಸಣೆಗಾಗಿ ಭೇಟಿ ನೀಡಿ", "Ignore it / ನಿರ್ಲಕ್ಷಿಸಿ", "Take random medicines / ಸ್ವಯಂ ಔಷಧಿ ತೆಗೆದುಕೊಳ್ಳಿ"],
+      c: 0,
+      why: "Seek assessment and follow professional advice. / ತಪಾಸಣೆ ಮಾಡಿಸಿ, ಆರೋಗ್ಯ ತಜ್ಞರ ಸಲಹೆ ಪಾಲಿಸಿ."
+    },
+    {
+      q: "What is anaemia?<br><span class='kn'>ರಕ್ತಹೀನತೆ ಎಂದರೇನು?</span>",
+      a: ["Low haemoglobin or too few healthy red blood cells / ಹಿಮೋಗ್ಲೋಬಿನ್ ಕಡಿಮೆ ಅಥವಾ ಕೆಂಪು ರಕ್ತಕಣಗಳ ಕೊರತೆ", "High blood sugar / ರಕ್ತದಲ್ಲಿ ಸಕ್ಕರೆ ಹೆಚ್ಚಾಗುವುದು", "High blood pressure / ಅಧಿಕ ರಕ್ತದೊತ್ತಡ"],
+      c: 0,
+      why: "Haemoglobin carries oxygen. In anaemia, less oxygen reaches the body, causing fatigue and weakness. / ಹಿಮೋಗ್ಲೋಬಿನ್ ಆಮ್ಲಜನಕವನ್ನು ಸಾಗಿಸುತ್ತದೆ. ರಕ್ತಹೀನತೆಯಲ್ಲಿ ದೇಹಕ್ಕೆ ಕಡಿಮೆ ಆಮ್ಲಜನಕ ತಲುಪುವುದರಿಂದ ದಣಿವು ಉಂಟಾಗುತ್ತದೆ."
+    },
+    {
+      q: "Which of these can be signs of anaemia?<br><span class='kn'>ಇವುಗಳಲ್ಲಿ ಯಾವುವು ರಕ್ತಹೀನತೆಯ ಲಕ್ಷಣಗಳಾಗಿರಬಹುದು?</span>",
+      a: ["Tiredness, pale skin and breathlessness / ದಣಿವು, ಬಿಳಿಚಿದ ಚರ್ಮ ಮತ್ತು ಏದುಸಿರು", "Sneezing / ಸೀನು", "Itchy ears / ಕಿವಿ ತುರಿಕೆ"],
+      c: 0,
+      why: "Pale skin, nails or inner eyelids, tiredness and breathlessness are common signs. / ಬಿಳಿಚಿದ ಚರ್ಮ, ಉಗುರುಗಳು ಅಥವಾ ಕಣ್ಣುರೆಪ್ಪೆಯ ಒಳಭಾಗ, ದಣಿವು ಮತ್ತು ಏದುಸಿರು ಸಾಮಾನ್ಯ ಲಕ್ಷಣಗಳು."
+    },
+    {
+      q: "To prevent anaemia, when is it better to drink tea or coffee?<br><span class='kn'>ರಕ್ತಹೀನತೆ ತಡೆಯಲು ಚಹಾ ಅಥವಾ ಕಾಫಿಯನ್ನು ಯಾವಾಗ ಕುಡಿಯುವುದು ಉತ್ತಮ?</span>",
+      a: ["At least 1 hour before or after meals / ಊಟಕ್ಕೆ ಕನಿಷ್ಠ 1 ಗಂಟೆ ಮೊದಲು ಅಥವಾ ನಂತರ", "Together with meals / ಊಟದ ಜೊತೆಯಲ್ಲೇ", "With iron tablets / ಕಬ್ಬಿಣದ ಮಾತ್ರೆಗಳ ಜೊತೆ"],
+      c: 0,
+      why: "Tea and coffee contain tannins that reduce iron absorption from food. / ಚಹಾ ಮತ್ತು ಕಾಫಿಯಲ್ಲಿರುವ ಟ್ಯಾನಿನ್‌ಗಳು ಆಹಾರದಿಂದ ಕಬ್ಬಿಣಾಂಶ ಹೀರಿಕೊಳ್ಳುವುದನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತವೆ."
+    },
+    {
+      q: "How does wearing footwear help prevent anaemia?<br><span class='kn'>ಪಾದರಕ್ಷೆ ಧರಿಸುವುದು ರಕ್ತಹೀನತೆ ತಡೆಯಲು ಹೇಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ?</span>",
+      a: ["It protects against hookworm infection / ಕೊಕ್ಕೆಹುಳು ಸೋಂಕಿನಿಂದ ರಕ್ಷಿಸುತ್ತದೆ", "It helps you walk faster / ವೇಗವಾಗಿ ನಡೆಯಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ", "It does not help / ಯಾವುದೇ ಸಹಾಯವಿಲ್ಲ"],
+      c: 0,
+      why: "Hookworms enter through bare feet and cause blood loss in the gut. / ಕೊಕ್ಕೆಹುಳುಗಳು ಬರಿಗಾಲಿನ ಮೂಲಕ ಪ್ರವೇಶಿಸಿ ಕರುಳಿನಲ್ಲಿ ರಕ್ತ ಹೀರಿ ರಕ್ತಹೀನತೆ ಉಂಟುಮಾಡುತ್ತವೆ."
+    },
+    {
+      q: "Why are deworming tablets given to children and adolescents?<br><span class='kn'>ಮಕ್ಕಳು ಮತ್ತು ಹದಿಹರೆಯದವರಿಗೆ ಜಂತುಹುಳು ನಿವಾರಕ ಮಾತ್ರೆಗಳನ್ನು ಏಕೆ ನೀಡಲಾಗುತ್ತದೆ?</span>",
+      a: ["Worms can cause anaemia / ಜಂತುಹುಳುಗಳು ರಕ್ತಹೀನತೆಗೆ ಕಾರಣವಾಗಬಹುದು", "To improve eyesight / ದೃಷ್ಟಿ ಸುಧಾರಿಸಲು", "To replace meals / ಊಟದ ಬದಲಿಗೆ"],
+      c: 0,
+      why: "Worms consume blood and nutrients from the body. / ಜಂತುಹುಳುಗಳು ದೇಹದಿಂದ ರಕ್ತ ಮತ್ತು ಪೋಷಕಾಂಶಗಳನ್ನು ಹೀರುತ್ತವೆ."
+    },
+    {
+      q: "Who is at higher risk of anaemia and needs extra iron?<br><span class='kn'>ಯಾರಿಗೆ ರಕ್ತಹೀನತೆಯ ಅಪಾಯ ಹೆಚ್ಚು ಮತ್ತು ಹೆಚ್ಚುವರಿ ಕಬ್ಬಿಣಾಂಶ ಬೇಕು?</span>",
+      a: ["Pregnant women / ಗರ್ಭಿಣಿಯರು", "No one / ಯಾರಿಗೂ ಇಲ್ಲ", "Only people who play sports / ಕ್ರೀಡಾಪಟುಗಳು ಮಾತ್ರ"],
+      c: 0,
+      why: "Pregnant women, adolescent girls, and young children have the highest iron requirements. / ಗರ್ಭಿಣಿಯರು, ಹದಿಹರೆಯದ ಹುಡುಗಿಯರು ಮತ್ತು ಚಿಕ್ಕ ಮಕ್ಕಳಿಗೆ ಹೆಚ್ಚಿನ ಕಬ್ಬಿಣಾಂಶ ಅಗತ್ಯ."
+    },
+    {
+      q: "IFA tablets can make stools dark or black. What does this usually mean?<br><span class='kn'>IFA ಮಾತ್ರೆಗಳಿಂದ ಮಲ ಕಪ್ಪಾಗಬಹುದು. ಇದರ ಅರ್ಥವೇನು?</span>",
+      a: ["It is common and usually harmless / ಇದು ಸಹಜ, ಹೆಚ್ಚಾಗಿ ತೊಂದರೆಯಿಲ್ಲ", "The tablets must be thrown away / ಮಾತ್ರೆಗಳನ್ನು ಎಸೆಯಬೇಕು", "You should stop eating / ಊಟ ನಿಲ್ಲಿಸಬೇಕು"],
+      c: 0,
+      why: "Dark stools are a harmless, expected effect of unabsorbed iron. / ಕಬ್ಬಿಣದ ಮಾತ್ರೆಗಳಿಂದ ಮಲ ಕಪ್ಪಾಗುವುದು ಸಹಜ ಮತ್ತು ನಿರುಪದ್ರವ."
+    },
+    {
+      q: "Which of these foods is rich in iron and helps prevent anaemia?<br><span class='kn'>ಇವುಗಳಲ್ಲಿ ಯಾವ ಆಹಾರ ಕಬ್ಬಿಣಾಂಶಯುಕ್ತವಾಗಿದ್ದು ರಕ್ತಹೀನತೆ ತಡೆಯಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ?</span>",
+      a: ["Drumstick leaves / ನುಗ್ಗೆ ಸೊಪ್ಪು", "Cucumber / ಸೌತೆಕಾಯಿ", "Potato chips / ಆಲೂಗಡ್ಡೆ ಚಿಪ್ಸ್"],
+      c: 0,
+      why: "Drumstick leaves and amaranth are packed with dietary iron. / ನುಗ್ಗೆ ಸೊಪ್ಪು ಮತ್ತು ದಂಟಿನ ಸೊಪ್ಪಿನಲ್ಲಿ ಹೇರಳ ಕಬ್ಬಿಣಾಂಶವಿದೆ."
+    },
+    {
+      q: "Cooking in an iron kadai (pan) can…<br><span class='kn'>ಕಬ್ಬಿಣದ ಬಾಣಲೆಯಲ್ಲಿ ಅಡುಗೆ ಮಾಡಿದರೆ…</span>",
+      a: ["Add some iron to food and help prevent anaemia / ಆಹಾರಕ್ಕೆ ಸ್ವಲ್ಪ ಕಬ್ಬಿಣಾಂಶ ಸೇರಿಸಿ ರಕ್ತಹೀನತೆ ತಡೆಯಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ", "Remove all vitamins / ಜೀವಸತ್ವಗಳನ್ನು ನಾಶಮಾಡುತ್ತದೆ", "Make food poisonous / ಆಹಾರವನ್ನು ವಿಷವಾಗಿಸುತ್ತದೆ"],
+      c: 0,
+      why: "Beneficial iron leaches into food during cooking, especially with tomato or tamarind. / ಅಡುಗೆ ಮಾಡುವಾಗ ಬಾಣಲೆಯಿಂದ ಸ್ವಲ್ಪ ಕಬ್ಬಿಣಾಂಶ ಆಹಾರಕ್ಕೆ ಸೇರುತ್ತದೆ."
+    },
+    {
+      q: "Which illness can destroy red blood cells and cause anaemia?<br><span class='kn'>ಯಾವ ಕಾಯಿಲೆ ಕೆಂಪು ರಕ್ತಕಣಗಳನ್ನು ನಾಶಮಾಡಿ ರಕ್ತಹೀನತೆ ಉಂಟುಮಾಡಬಹುದು?</span>",
+      a: ["Malaria / ಮಲೇರಿಯಾ", "Common cold / ನೆಗಡಿ", "Toothache / ಹಲ್ಲುನೋವು"],
+      c: 0,
+      why: "The malaria parasite breaks down red blood cells, causing acute anaemia. / ಮಲೇರಿಯಾ ಪರಾವಲಂಬಿ ಕೆಂಪು ರಕ್ತಕಣಗಳನ್ನು ನಾಶಮಾಡುತ್ತದೆ."
+    },
+    {
+      q: "How can anaemia affect school children?<br><span class='kn'>ರಕ್ತಹೀನತೆ ಶಾಲಾ ಮಕ್ಕಳ ಮೇಲೆ ಹೇಗೆ ಪರಿಣಾಮ ಬೀರಬಹುದು?</span>",
+      a: ["Low energy and poor concentration / ಶಕ್ತಿ ಕಡಿಮೆ ಮತ್ತು ಗಮನ ಕೇಂದ್ರೀಕರಿಸಲು ಕಷ್ಟ", "Makes them taller / ಎತ್ತರವಾಗಿ ಬೆಳೆಸುತ್ತದೆ", "No effect at all / ಯಾವುದೇ ಪರಿಣಾಮವಿಲ್ಲ"],
+      c: 0,
+      why: "Anaemia reduces oxygen to the brain and muscles, affecting memory and play. / ರಕ್ತಹೀನತೆಯು ಮೆದುಳಿಗೆ ಆಮ್ಲಜನಕವನ್ನು ಕಡಿಮೆ ಮಾಡಿ ಕಲಿಕೆ ಮತ್ತು ಗಮನವನ್ನು ಬಾಧಿಸುತ್ತದೆ."
+    },
+    {
+      q: "Sprouting pulses like green gram (moong) can…<br><span class='kn'>ಹೆಸರುಕಾಳಿನಂತಹ ಬೇಳೆಕಾಳುಗಳನ್ನು ಮೊಳಕೆ ಕಟ್ಟಿದರೆ…</span>",
+      a: ["Help the body absorb more iron / ದೇಹವು ಹೆಚ್ಚು ಕಬ್ಬಿಣಾಂಶ ಹೀರಿಕೊಳ್ಳಲು ಸಹಾಯವಾಗುತ್ತದೆ", "Remove all the iron / ಕಬ್ಬಿಣಾಂಶ ಹೊರಹೋಗುತ್ತದೆ", "Make them unsafe to eat / ತಿನ್ನಲು ಯೋಗ್ಯವಲ್ಲ"],
+      c: 0,
+      why: "Sprouting breaks down phytates which inhibit iron uptake. / ಮೊಳಕೆ ಕಟ್ಟುವುದರಿಂದ ಕಬ್ಬಿಣ ಹೀರಿಕೊಳ್ಳಲು ಅಡ್ಡಿಯಾಗುವ ಫೈಟೇಟ್‌ಗಳು ನಾಶವಾಗುತ್ತವೆ."
+    }
+  ];
+
+  /* ============================================================
+     GEOMETRY & BOARD RENDERING (1000x1000 coordinate system)
+     ============================================================ */
+  function cellNumber(row, col) {
+    return row % 2 === 0 ? row * 10 + (col + 1) : (row + 1) * 10 - col;
+  }
+  function cellOf(n) {
+    const row = Math.floor((n - 1) / 10), i = (n - 1) % 10;
+    return { col: row % 2 === 0 ? i : 9 - i, vr: 9 - row };
+  }
+  function center(n) {
+    const c = cellOf(n);
+    return { x: c.col * 100 + 50, y: c.vr * 100 + 50 };
+  }
+  const f1 = v => v.toFixed(1);
+  const ladderEnds = Object.fromEntries(Object.entries(ladders).map(([a, b]) => [b, +a]));
+  const snakeEnds = Object.fromEntries(Object.entries(snakes).map(([a, b]) => [b, +a]));
+
+  const board = document.getElementById("board");
+  function drawBoard() {
+    board.innerHTML = "";
+    for (let vr = 0; vr < 10; vr++) {
+      const row = 9 - vr;
+      for (let col = 0; col < 10; col++) {
+        const n = cellNumber(row, col);
+        const el = document.createElement("div");
+        el.className = "cell" + ((row + col) % 2 ? " alt" : "");
+        let mark = "", name = "", badge = "", tip = "";
+
+        if (special[n]) {
+          mark = special[n].icon;
+          name = special[n].label + " / " + special[n].kn;
+          badge = `<i class="badge quiz">?</i>`;
+          el.classList.add("quizcell");
+          tip = `Quiz square: ${special[n].label}`;
+        }
+        if (ladders[n]) {
+          badge = `<i class="badge up">↑${ladders[n]}</i>`;
+          el.classList.add("lstart");
+          tip = `Ladder: climb from ${n} to ${ladders[n]} / ಏಣಿ: ${n} → ${ladders[n]}`;
+        }
+        if (snakes[n]) {
+          badge = `<i class="badge down">↓${snakes[n]}</i>`;
+          el.classList.add("sstart");
+          tip = `Snake: slide from ${n} down to ${snakes[n]} / ಹಾವು: ${n} → ${snakes[n]}`;
+        }
+        if (ladderEnds[n]) {
+          el.classList.add("lend");
+          tip = `Top of ladder from ${ladderEnds[n]}`;
+        }
+        if (snakeEnds[n]) {
+          el.classList.add("send");
+          tip = `Tail of snake from ${snakeEnds[n]}`;
+        }
+        if (n === 1) {
+          mark = "🚩";
+          name = "Start / ಪ್ರಾರಂಭ";
+          el.classList.add("start");
+        }
+        if (n === 100) {
+          mark = "🏆";
+          name = "Finish / ಅಂತ್ಯ";
+          el.classList.add("finish");
+        }
+
+        if (tip) el.title = tip;
+        el.innerHTML = `<span class="num">${n}</span>${badge}${mark ? `<span class="cellmark">${mark}</span>` : ""}${name ? `<span class="cellname">${name}</span>` : ""}`;
+        board.appendChild(el);
+      }
+    }
+  }
+
+  /* Ladders SVG */
+  function ladderSVG(a, b) {
+    const S = center(a), E = center(b), dx = E.x - S.x, dy = E.y - S.y, L = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+    const ext = 18, half = 17, s = { x: S.x - ux * ext, y: S.y - uy * ext }, e = { x: E.x + ux * ext, y: E.y + uy * ext }, len = L + 2 * ext;
+    const rail = k => [{ x: s.x + nx * half * k, y: s.y + ny * half * k }, { x: e.x + nx * half * k, y: e.y + ny * half * k }];
+    const r1 = rail(1), r2 = rail(-1);
+    const line = (p, q, st, w) => `<line x1="${f1(p.x)}" y1="${f1(p.y)}" x2="${f1(q.x)}" y2="${f1(q.y)}" stroke="${st}" stroke-width="${w}" stroke-linecap="round"/>`;
+    const count = Math.max(3, Math.round((len - 30) / 30));
+    let rungs = "", rungShadow = "";
+    for (let i = 0; i <= count; i++) {
+      const d = 15 + (len - 30) * i / count;
+      const p = { x: s.x + ux * d + nx * half, y: s.y + uy * d + ny * half };
+      const q = { x: s.x + ux * d - nx * half, y: s.y + uy * d - ny * half };
+      rungShadow += line(p, q, "#000", 8);
+      rungs += line(p, q, "#047857", 8) + line(p, q, "#6ee7b7", 4.5);
+    }
+    const shadow = `<g transform="translate(6,9)" opacity=".22" filter="url(#soft)">${rungShadow}${line(r1[0], r1[1], "#000", 12)}${line(r2[0], r2[1], "#000", 12)}</g>`;
+    const rails = [r1, r2].map(r => line(r[0], r[1], "#065f46", 12) + line(r[0], r[1], "#10b981", 7.5) + line({ x: r[0].x - nx * 1.6, y: r[0].y - ny * 1.6 }, { x: r[1].x - nx * 1.6, y: r[1].y - ny * 1.6 }, "#a7f3d0", 2.2)).join("");
+    return `<g class="item" data-from="${a}">${shadow}${rungs}${rails}</g>`;
+  }
+
+  /* Snakes SVG */
+  const SNAKE_STYLES = [
+    { body: "#e11d48", dark: "#881337", light: "#fecdd3" },
+    { body: "#8b5cf6", dark: "#4c1d95", light: "#ede9fe" },
+    { body: "#f97316", dark: "#9a3412", light: "#ffedd5" },
+    { body: "#db2777", dark: "#831843", light: "#fce7f3" },
+    { body: "#2563eb", dark: "#1e3a8a", light: "#dbeafe" },
+    { body: "#d97706", dark: "#78350f", light: "#fef3c7" }
+  ];
+
+  const snakeWidth = t => 26 * (1 - 0.85 * Math.pow(t, 1.1)) + 1.5;
+
+  function snakePoints(a, b, k) {
+    const S = center(a), E = center(b), dx = E.x - S.x, dy = E.y - S.y, L = Math.hypot(dx, dy);
+    const nx = -dy / L, ny = dx / L;
+    const halfWaves = Math.max(2, Math.round(L / 70)), amp = (k % 2 ? 1 : -1) * Math.min(27, L * 0.12), N = 120, pts = [];
+    const sm = x => x >= 1 ? 1 : x * x * (3 - 2 * x);
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, env = sm(t / 0.22) * sm((1 - t) / 0.16);
+      const o = amp * Math.sin(Math.PI * halfWaves * t) * env;
+      pts.push({ x: S.x + dx * t + nx * o, y: S.y + dy * t + ny * o, t });
+    }
+    let acc = 0;
+    pts.forEach((p, i) => {
+      const P = pts[Math.max(0, i - 1)], Q = pts[Math.min(N, i + 1)];
+      const tx = Q.x - P.x, ty = Q.y - P.y, l = Math.hypot(tx, ty) || 1;
+      p.nx = -ty / l; p.ny = tx / l;
+      if (i) acc += Math.hypot(p.x - P.x, p.y - P.y);
+      p.s = acc;
+    });
+    return pts;
+  }
+
+  function ribbon(pts, wf, off) {
+    const Lp = [], Rp = [];
+    pts.forEach(p => {
+      const w = snakeWidth(p.t), h = w * wf / 2, cx = p.x + p.nx * w * off, cy = p.y + p.ny * w * off;
+      Lp.push(f1(cx + p.nx * h) + "," + f1(cy + p.ny * h));
+      Rp.push(f1(cx - p.nx * h) + "," + f1(cy - p.ny * h));
+    });
+    return "M" + Lp.join("L") + "L" + Rp.reverse().join("L") + "Z";
+  }
+
+  const snakePaths = {};
+  function snakeSVG(a, b, k) {
+    const st = SNAKE_STYLES[k % SNAKE_STYLES.length], pts = snakePoints(a, b, k);
+    snakePaths[a] = pts;
+    const body = ribbon(pts, 1, 0), total = pts[pts.length - 1].s;
+    let bands = "";
+    for (let s = 34; s < total - 16; s += 17) {
+      const p = pts.reduce((m, q) => Math.abs(q.s - s) < Math.abs(m.s - s) ? q : m);
+      const w = snakeWidth(p.t) * 0.46;
+      bands += `<line x1="${f1(p.x + p.nx * w)}" y1="${f1(p.y + p.ny * w)}" x2="${f1(p.x - p.nx * w)}" y2="${f1(p.y - p.ny * w)}" stroke="${st.dark}" stroke-width="${f1(Math.max(2, snakeWidth(p.t) * 0.24))}" stroke-linecap="round" opacity=".55"/>`;
+    }
+    const P0 = pts[0], P1 = pts[5], ang = Math.atan2(P0.y - P1.y, P0.x - P1.x) * 180 / Math.PI;
+    const head = `<g transform="translate(${f1(P0.x)},${f1(P0.y)}) rotate(${f1(ang)}) scale(1.18)">
+      <path d="M24,0 L36,0 M36,0 L42,-5 M36,0 L42,5" stroke="#e11d48" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <path d="M-15,-13 C3,-19 22,-12 25,0 C22,12 3,19 -15,13 C-21,8 -21,-8 -15,-13Z" fill="${st.body}" stroke="${st.dark}" stroke-width="2.4"/>
+      <ellipse cx="2" cy="-4" rx="11" ry="4" fill="${st.light}" opacity=".45"/>
+      <circle cx="8" cy="-7.5" r="5.2" fill="#fff" stroke="${st.dark}" stroke-width="1.2"/><circle cx="9.6" cy="-7.5" r="2.7" fill="#111"/>
+      <circle cx="8" cy="7.5" r="5.2" fill="#fff" stroke="${st.dark}" stroke-width="1.2"/><circle cx="9.6" cy="7.5" r="2.7" fill="#111"/>
+      <circle cx="20" cy="-3.2" r="1.3" fill="${st.dark}"/><circle cx="20" cy="3.2" r="1.3" fill="${st.dark}"/>
+    </g>`;
+    return `<g class="item" data-from="${a}">
+      <path d="${body}" transform="translate(6,9)" fill="#000" opacity=".22" filter="url(#soft)"/>
+      <path d="${body}" fill="${st.body}" stroke="${st.dark}" stroke-width="2.4" stroke-linejoin="round"/>
+      ${bands}
+      <path d="${ribbon(pts, 0.26, -0.2)}" fill="${st.light}" opacity=".55"/>
+      ${head}
+    </g>`;
+  }
+
+  function drawArt() {
+    let out = `<defs><filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter></defs>`;
+    Object.entries(ladders).forEach(([a, b]) => out += ladderSVG(+a, b));
+    Object.entries(snakes).forEach(([a, b], k) => out += snakeSVG(+a, b, k));
+    document.getElementById("art").innerHTML = out;
+  }
+
+  /* Interactive Highlighting */
+  const art = document.getElementById("art");
+  let pinned = null, flashTimer = null;
+
+  function highlight(from) {
+    art.classList.toggle("focus", from != null);
+    art.querySelectorAll(".item").forEach(g => g.classList.toggle("hl", +g.dataset.from === from));
+  }
+
+  function buildKey() {
+    const make = (map, host, cls) => {
+      host.innerHTML = "";
+      Object.entries(map).forEach(([a, b]) => {
+        const c = document.createElement("button");
+        c.className = "chip " + cls;
+        c.textContent = `${a} → ${b}`;
+        c.dataset.from = a;
+        c.onmouseenter = c.onfocus = () => highlight(+a);
+        c.onmouseleave = c.onblur = () => highlight(pinned);
+        c.onclick = () => {
+          pinned = pinned === +a ? null : +a;
+          document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", +x.dataset.from === pinned));
+          highlight(pinned);
+        };
+        host.appendChild(c);
+      });
+    };
+    make(ladders, document.getElementById("ladderKey"), "up");
+    make(snakes, document.getElementById("snakeKey"), "down");
+  }
+
+  function flash(from) {
+    clearTimeout(flashTimer);
+    highlight(from);
+    flashTimer = setTimeout(() => highlight(pinned), 1600);
+  }
+
+  /* ============================================================
+     PLAYER TOKENS & MOVEMENT
+     ============================================================ */
+  const tokenLayer = document.getElementById("tokenLayer");
+  const tokens = [0, 1].map(i => {
+    const t = document.createElement("div");
+    t.className = "token p" + (i + 1);
+    t.textContent = i + 1;
+    tokenLayer.appendChild(t);
+    return t;
+  });
+
+  function placeToken(i, x, y) {
+    const off = activePlayers === 2 ? (i === 0 ? -21 : 21) : 0;
+    tokens[i].style.left = (x + off) / 10 + "%";
+    tokens[i].style.top = (y + 22) / 10 + "%";
+  }
+
+  function placeAt(i, n) {
+    const c = center(n);
+    placeToken(i, c.x, c.y);
+  }
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function hop(i, n) {
+    const t = tokens[i];
+    t.classList.remove("hop");
+    void t.offsetWidth;
+    t.classList.add("hop");
+    placeAt(i, n);
+    playHop();
+    await sleep(220);
+  }
+
+  function follow(i, pts, dur) {
+    const total = pts[pts.length - 1].s, t = tokens[i];
+    t.classList.add("glide");
+    return new Promise(res => {
+      const t0 = performance.now();
+      (function frame(now) {
+        const p = Math.min(1, (now - t0) / dur);
+        const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        const s = e * total;
+        let j = 1;
+        while (j < pts.length - 1 && pts[j].s < s) j++;
+        const A = pts[j - 1], B = pts[j];
+        const u = (s - A.s) / ((B.s - A.s) || 1);
+        placeToken(i, A.x + (B.x - A.x) * u, A.y + (B.y - A.y) * u);
+        if (p < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          t.classList.remove("glide");
+          res();
+        }
+      })(t0);
+    });
+  }
+
+  function ladderPath(a) {
+    const S = center(a), E = center(ladders[a]);
+    return [{ ...S, s: 0 }, { ...E, s: Math.hypot(E.x - S.x, E.y - S.y) }];
+  }
+
+  /* ============================================================
+     GAME FLOW & CONTROLS
+     ============================================================ */
+  let positions = [1, 1], turn = 0, activePlayers = 2, waiting = false, busy = false, gameId = 0, pending = null;
+  const rollBtn = document.getElementById("roll"), diceEl = document.getElementById("dice");
+  const FACES = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+
+  function status(en, kn, next) {
+    document.getElementById("status").innerHTML = `${en}<span class="kn-status">${kn}</span>` + (next ? `<div class="nextp">${next}</div>` : "");
+  }
+
+  function updatePanel() {
+    document.getElementById("pos1").textContent = `Square ${positions[0]} / ಚೌಕ ${positions[0]}`;
+    document.getElementById("pos2").textContent = `Square ${positions[1]} / ಚೌಕ ${positions[1]}`;
+    document.getElementById("p1").classList.toggle("active", turn === 0);
+    document.getElementById("p2").classList.toggle("active", turn === 1 && activePlayers === 2);
+    document.getElementById("p2").style.display = activePlayers === 2 ? "" : "none";
+    tokens[1].style.display = activePlayers === 2 ? "" : "none";
+    tokens.forEach((t, i) => t.classList.toggle("front", i === turn));
+  }
+
+  async function rollDice() {
+    initAudio();
+    playDiceRoll();
+    diceEl.classList.remove("spin");
+    void diceEl.offsetWidth;
+    diceEl.classList.add("spin");
+    for (let i = 0; i < 6; i++) {
+      diceEl.textContent = FACES[Math.floor(Math.random() * 6)];
+      await sleep(65);
+    }
+    const roll = Math.floor(Math.random() * 6) + 1;
+    diceEl.textContent = FACES[roll - 1];
+    return roll;
+  }
+
+  rollBtn.onclick = async () => {
+    if (waiting || busy) return;
+    busy = true;
+    rollBtn.disabled = true;
+    const g = gameId, p = turn;
+    const roll = await rollDice();
+    if (g !== gameId) return;
+
+    const old = positions[p], next = old + roll;
+    if (next > 100) {
+      endTurn(`Player ${p + 1} rolled ${roll}. You need an exact roll to land on 100!`, `100 ತಲುಪಲು ನಿಖರ ಸಂಖ್ಯೆ ಬೇಕು. ನೀವು ${roll} ಉರುಳಿಸಿದ್ದೀರಿ.`);
+      return;
+    }
+
+    status(`Player ${p + 1} rolled ${roll}…`, `ಆಟಗಾರ ${p + 1}, ನೀವು ${roll} ಉರುಳಿಸಿದ್ದೀರಿ…`);
+    for (let s = old + 1; s <= next; s++) {
+      positions[p] = s;
+      await hop(p, s);
+      if (g !== gameId) return;
+    }
+    updatePanel();
+
+    let en = `Player ${p + 1} moved to square ${next}.`;
+    let kn = `ಆಟಗಾರ ${p + 1}: ${next}ನೇ ಚೌಕಕ್ಕೆ ಚಲಿಸಿದ್ದೀರಿ.`;
+
+    if (ladders[next]) {
+      en = `🪜 Healthy Habit Ladder! Player ${p + 1} climbed from ${next} to ${ladders[next]}.`;
+      kn = `🪜 ಆರೋಗ್ಯದ ಏಣಿ! ${next}ರಿಂದ ${ladders[next]}ಕ್ಕೆ ಮೇಲಕ್ಕೆ ಏರಿದ್ದೀರಿ!`;
+      status(en, kn);
+      flash(next);
+      playLadder();
+      await sleep(350);
+      if (g !== gameId) return;
+      await follow(p, ladderPath(next), 850);
+      if (g !== gameId) return;
+      positions[p] = ladders[next];
+    } else if (snakes[next]) {
+      en = `🐍 Dietary Risk Snake! Player ${p + 1} slid from ${next} down to ${snakes[next]}.`;
+      kn = `🐍 ರಕ್ತಹೀನತೆ ಅಪಾಯದ ಹಾವು! ${next}ರಿಂದ ${snakes[next]}ಕ್ಕೆ ಕೆಳಗೆ ಜಾರಿದ್ದೀರಿ!`;
+      status(en, kn);
+      flash(next);
+      playSnake();
+      await sleep(350);
+      if (g !== gameId) return;
+      await follow(p, snakePaths[next], 1100);
+      if (g !== gameId) return;
+      positions[p] = snakes[next];
+    }
+
+    placeAt(p, positions[p]);
+    updatePanel();
+
+    if (special[next]) {
+      status(en, kn);
+      pending = { en, kn };
+      await sleep(350);
+      if (g !== gameId) return;
+      showQuiz();
+      return;
+    }
+
+    endTurn(en, kn);
+  };
+
+  diceEl.onclick = () => {
+    if (!rollBtn.disabled) rollBtn.click();
+  };
+
+  function endTurn(en, kn) {
+    busy = false;
+    if (positions[turn] === 100) {
+      status(en, kn, `🎉 Player ${turn + 1} wins! / ಆಟಗಾರ ${turn + 1} ಗೆದ್ದಿದ್ದಾರೆ!`);
+      rollBtn.disabled = true;
+      showWin(turn);
+      return;
+    }
+    turn = activePlayers === 1 ? 0 : 1 - turn;
+    updatePanel();
+    status(en, kn, `Player ${turn + 1}, roll the dice! / ಆಟಗಾರ ${turn + 1}, ದಾಳ ಉರುಳಿಸಿ!`);
+    rollBtn.disabled = false;
+  }
+
+  /* Shuffled Quiz Deck */
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  let deck = [];
+  function nextQuestion() {
+    if (!deck.length) deck = shuffle([...quiz.keys()]);
+    return quiz[deck.pop()];
+  }
+
+  function showQuiz() {
+    playQuiz();
+    waiting = true;
+    const q = nextQuestion();
+    document.getElementById("qtext").innerHTML = q.q;
+    const box = document.getElementById("answers");
+    box.innerHTML = "";
+    const feedbackEl = document.getElementById("feedback");
+    feedbackEl.textContent = "";
+    feedbackEl.className = "feedback";
+    document.getElementById("continue").disabled = true;
+
+    let correctBtn = null;
+    shuffle([...q.a.keys()]).forEach(i => {
+      const b = document.createElement("button");
+      b.innerHTML = q.a[i];
+      if (i === q.c) correctBtn = b;
+      b.onclick = () => {
+        [...box.children].forEach(x => x.disabled = true);
+        feedbackEl.classList.add("active-feedback");
+        if (i === q.c) {
+          playCorrect();
+          b.classList.add("correct");
+          feedbackEl.innerHTML = `<span style="color:#059669">✅ Correct Answer! / ಸರಿಯಾದ ಉತ್ತರ!</span><br>${q.why}`;
+        } else {
+          playWrong();
+          b.classList.add("wrong");
+          if (correctBtn) correctBtn.classList.add("correct");
+          feedbackEl.innerHTML = `<span style="color:#dc2626">❌ Not quite / ತಪ್ಪು ಉತ್ತರ.</span><br><b>Correct / ಸರಿಯಾದ ಉತ್ತರ:</b> ${q.a[q.c]}<br>${q.why}`;
+        }
+        document.getElementById("continue").disabled = false;
+      };
+      box.appendChild(b);
+    });
+
+    document.getElementById("quizModal").classList.add("show");
+  }
+
+  document.getElementById("continue").onclick = () => {
+    document.getElementById("quizModal").classList.remove("show");
+    waiting = false;
+    if (pending) {
+      const m = pending;
+      pending = null;
+      endTurn(m.en, m.kn);
+    }
+  };
+
+  /* Victory Modal & Celebration */
+  function showWin(playerIndex) {
+    playWin();
+    triggerConfetti();
+    const winTitle = document.getElementById("winTitle");
+    const winSubtitle = document.getElementById("winSubtitle");
+    winTitle.textContent = `🎉 Player ${playerIndex + 1} Wins!`;
+    winSubtitle.innerHTML = `ಆಟಗಾರ ${playerIndex + 1} ಗೆದ್ದಿದ್ದಾರೆ!<br>Congratulations on reaching square 100 and mastering anemia prevention!`;
+    document.getElementById("winModal").classList.add("show");
+  }
+
+  document.getElementById("winPlayAgain").onclick = () => {
+    document.getElementById("winModal").classList.remove("show");
+    resetGame();
+  };
+
+  function resetGame() {
+    gameId++;
+    positions = [1, 1];
+    turn = 0;
+    waiting = false;
+    busy = false;
+    pending = null;
+    rollBtn.disabled = false;
+    diceEl.textContent = "🎲";
+    document.getElementById("quizModal").classList.remove("show");
+    document.getElementById("winModal").classList.remove("show");
+    tokens.forEach((t, i) => {
+      t.classList.remove("glide", "hop");
+      placeAt(i, 1);
+    });
+    updatePanel();
+    status("Player 1, roll the dice to begin!", "ಆಟಗಾರ 1, ಆಟ ಪ್ರಾರಂಭಿಸಲು ದಾಳ ಉರುಳಿಸಿ!");
+  }
+
+  document.getElementById("players").onchange = e => {
+    activePlayers = Number(e.target.value);
+    resetGame();
+  };
+
+  document.getElementById("reset").onclick = resetGame;
+
+  // Initialize Board & Game
+  drawBoard();
+  drawArt();
+  buildKey();
+  resetGame();
+  </script>
+</body>
+</html>
